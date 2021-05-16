@@ -1,0 +1,31 @@
+version: 2
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test-23
+      - test-24
+
+erlang-test-steps: &erlang-test-steps
+  steps:
+    - checkout:
+        path: ~/repo
+    - run:
+        name: run tests
+        command: make tests
+        working_directory: ~/repo
+    - run:
+        name: run dialyzer
+        command: make dialyze
+        working_directory: ~/repo
+
+jobs:
+  test-23:
+    <<: *erlang-test-steps
+    docker:
+      - image: circleci/erlang:23.0
+  test-24:
+    <<: *erlang-test-steps
+    docker:
+      - image: circleci/erlang:24.0
