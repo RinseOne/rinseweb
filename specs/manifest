@@ -1,0 +1,15 @@
+* Manifest template
+
+```erlang
+-type match_type() :: regex.
+
+-type match() :: #{
+    type := match_type(),
+    value := binary()
+}.
+
+-type manifest() :: #{
+    matches: [match()],
+    handler: atom()
+}.
+```
