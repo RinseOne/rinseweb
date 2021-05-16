@@ -9,6 +9,9 @@ workflows:
 
 erlang-test-steps: &erlang-test-steps
   steps:
+    - run:
+        name: install units
+        command: sudo apt install units
     - checkout:
         path: ~/repo
     - run:
@@ -24,8 +27,8 @@ jobs:
   test-23:
     <<: *erlang-test-steps
     docker:
-      - image: circleci/erlang:23.0
+      - image: circleci/erlang:23
   test-24:
     <<: *erlang-test-steps
     docker:
-      - image: circleci/erlang:24.0
+      - image: circleci/erlang:24
