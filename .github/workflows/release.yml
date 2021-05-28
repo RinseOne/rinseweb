@@ -16,6 +16,8 @@ jobs:
         with:
           # https://packages.erlang-solutions.com/erlang/debian/pool/esl-erlang_24.0.1-1~ubuntu~focal_amd64.deb
           otp-version: 24.0.1
+      - name: Install units
+        run: sudo apt install units
       - name: Test
         run: rebar3 ct
       - name: Create release
