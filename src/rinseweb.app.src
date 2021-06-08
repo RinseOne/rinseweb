@@ -1,6 +1,6 @@
 {application, rinseweb,
  [{description, "Instant Answers Web Service"},
-  {vsn, "0.0.1"},
+  {vsn, "0.0.2"},
   {registered, []},
   {mod, {rinseweb_app, []}},
   {applications,
