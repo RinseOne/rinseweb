@@ -11,11 +11,13 @@
 %% Types
 -type unit() ::
     % weight
-    g | kg | pound | ounce
+    mg | g | kg | pound | ounce
+    % volume
+    | ml | liter | kiloliter | quart | gallon | cc
     % bandwidth
     | bit | byte | kilobit | kilobyte | megabit | megabyte | gigabit | gigabyte
     % distance
-    | mm | cm | m | km | foot | yard | mile
+    | mm | cm | m | km | inch | foot | yard | mile
     % temperature
     | tempC | tempF
     % default
@@ -110,6 +112,9 @@ number_to_list(Num) when is_float(Num) -> float_to_list(Num, [{decimals, 10}, co
 
 -spec binary_to_canonical_unit(binary()) -> unit().
 % weight
+binary_to_canonical_unit(<<"milligram">>) -> mg;
+binary_to_canonical_unit(<<"milligrams">>) -> mg;
+binary_to_canonical_unit(<<"mg">>) -> mg;
 binary_to_canonical_unit(<<"gram">>) -> g;
 binary_to_canonical_unit(<<"grams">>) -> g;
 binary_to_canonical_unit(<<"g">>) -> g;
@@ -121,6 +126,20 @@ binary_to_canonical_unit(<<"pounds">>) -> pound;
 binary_to_canonical_unit(<<"ounce">>) -> ounce;
 binary_to_canonical_unit(<<"ounces">>) -> ounce;
 binary_to_canonical_unit(<<"oz">>) -> ounce;
+% volume
+binary_to_canonical_unit(<<"milliliter">>) -> ml;
+binary_to_canonical_unit(<<"milliliters">>) -> ml;
+binary_to_canonical_unit(<<"ml">>) -> ml;
+binary_to_canonical_unit(<<"liter">>) -> liter;
+binary_to_canonical_unit(<<"kiloliter">>) -> kiloliter;
+binary_to_canonical_unit(<<"kiloliters">>) -> kiloliter;
+binary_to_canonical_unit(<<"quart">>) -> quart;
+binary_to_canonical_unit(<<"quarts">>) -> quart;
+binary_to_canonical_unit(<<"qt">>) -> quart;
+binary_to_canonical_unit(<<"qts">>) -> quart;
+binary_to_canonical_unit(<<"gallon">>) -> gallon;
+binary_to_canonical_unit(<<"gallons">>) -> gallon;
+binary_to_canonical_unit(<<"cc">>) -> cc;
 % bandwidth
 binary_to_canonical_unit(<<"bit">>) -> bit;
 binary_to_canonical_unit(<<"bits">>) -> bit;
@@ -154,6 +173,9 @@ binary_to_canonical_unit(<<"m">>) -> m;
 binary_to_canonical_unit(<<"kilometer">>) -> km;
 binary_to_canonical_unit(<<"kilometers">>) -> km;
 binary_to_canonical_unit(<<"km">>) -> km;
+binary_to_canonical_unit(<<"in">>) -> inch;
+binary_to_canonical_unit(<<"inch">>) -> inch;
+binary_to_canonical_unit(<<"inches">>) -> inch;
 binary_to_canonical_unit(<<"foot">>) -> foot;
 binary_to_canonical_unit(<<"feet">>) -> foot;
 binary_to_canonical_unit(<<"yard">>) -> yard;
@@ -170,10 +192,15 @@ binary_to_canonical_unit(_) -> unknown.
 
 -spec canonical_unit_to_binary(number(), unit()) -> binary().
 % weight
+canonical_unit_to_binary(1, mg) -> <<"milligram">>;
+canonical_unit_to_binary(_, mg) -> <<"milligrams">>;
 canonical_unit_to_binary(1, g) -> <<"gram">>;
 canonical_unit_to_binary(_, g) -> <<"grams">>;
 canonical_unit_to_binary(1, kg) -> <<"kilogram">>;
 canonical_unit_to_binary(_, kg) -> <<"kilograms">>;
+% volume
+canonical_unit_to_binary(_, ml) -> <<"ml">>;
+canonical_unit_to_binary(_, cc) -> <<"cc">>;
 % bandwidth
 % distance
 canonical_unit_to_binary(1, mm) -> <<"millimeter">>;
@@ -184,6 +211,8 @@ canonical_unit_to_binary(1, m) -> <<"meter">>;
 canonical_unit_to_binary(_, m) -> <<"meters">>;
 canonical_unit_to_binary(1, km) -> <<"kilometer">>;
 canonical_unit_to_binary(_, km) -> <<"kilometers">>;
+canonical_unit_to_binary(1, inch) -> <<"inch">>;
+canonical_unit_to_binary(_, inch) -> <<"inches">>;
 canonical_unit_to_binary(1, foot) -> <<"foot">>;
 canonical_unit_to_binary(_, foot) -> <<"feet">>;
 % temperature
