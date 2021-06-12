@@ -41,20 +41,26 @@ end_per_testcase(_, _Config) ->
 
 unit_coverage(_) ->
     TestCases = [
+        % weight
         {<<"1">>, <<"g">>, <<"mg">>, <<"1 gram is equal to 1000 milligrams">>},
         {<<"1">>, <<"kg">>, <<"g">>, <<"1 kilogram is equal to 1000 grams">>},
         {<<"1">>, <<"pound">>, <<"ounce">>, <<"1 pound is equal to 16 ounces">>},
+        % volume
         {<<"1">>, <<"liter">>, <<"ml">>, <<"1 liter is equal to 1000 ml">>},
         {<<"1">>, <<"kiloliter">>, <<"cc">>, <<"1 kiloliter is equal to 1000000 cc">>},
         {<<"1">>, <<"gallon">>, <<"qt">>, <<"1 gallon is equal to 4 quarts">>},
+        {<<"1">>, <<"gallon">>, <<"floz">>, <<"1 gallon is equal to 128 fluid ounces">>},
+        % bandwidth
         {<<"1">>, <<"byte">>, <<"bit">>, <<"1 byte is equal to 8 bits">>},
         {<<"1">>, <<"kb">>, <<"kilobit">>, <<"1 kilobyte is equal to 8 kilobits">>},
         {<<"1">>, <<"mb">>, <<"megabit">>, <<"1 megabyte is equal to 8 megabits">>},
         {<<"1">>, <<"gb">>, <<"gigabit">>, <<"1 gigabyte is equal to 8 gigabits">>},
         {<<"1">>, <<"cm">>, <<"mm">>, <<"1 centimeter is equal to 10 millimeters">>},
         {<<"1">>, <<"km">>, <<"m">>, <<"1 kilometer is equal to 1000 meters">>},
+        % distance
         {<<"1">>, <<"mile">>, <<"yard">>, <<"1 mile is equal to 1760 yards">>},
         {<<"1">>, <<"foot">>, <<"inch">>, <<"1 foot is equal to 12 inches">>},
+        % temperature
         {<<"1">>, <<"celsius">>, <<"fahrenheit">>, <<"1 celsius is equal to 33.8 fahrenheit">>}
     ],
     F = fun({UnitNum, UnitFrom, UnitTo, ExpectedShort}, Acc) ->
@@ -73,7 +79,8 @@ unit_invalid(_) ->
     TestCases = [
         {<<"kg">>, <<"foo">>},
         {<<"foo">>, <<"kg">>},
-        {<<"foo">>, <<"bar">>}
+        {<<"foo">>, <<"bar">>},
+        {<<"kg">>, <<"mm">>}
     ],
     UnitNum = <<"1">>,
     F = fun({UnitFrom, UnitTo}, Acc) ->
