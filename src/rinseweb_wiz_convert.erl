@@ -100,6 +100,7 @@ binary_to_number(B) ->
 
 -spec string_to_number(string()) -> number() | undefined.
 string_to_number([]) -> undefined;
+string_to_number("conformability error") -> undefined;
 string_to_number(S) ->
     case string:to_float(S) of
         {error, no_float} -> list_to_integer(S);
