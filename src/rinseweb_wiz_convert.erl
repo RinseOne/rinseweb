@@ -13,7 +13,7 @@
     % weight
     mg | g | kg | pound | ounce
     % volume
-    | ml | liter | kiloliter | quart | gallon | cc
+    | ml | liter | kiloliter | quart | gallon | cc | floz
     % bandwidth
     | bit | byte | kilobit | kilobyte | megabit | megabyte | gigabit | gigabyte
     % distance
@@ -121,6 +121,8 @@ binary_to_canonical_unit(<<"g">>) -> g;
 binary_to_canonical_unit(<<"kilogram">>) -> kg;
 binary_to_canonical_unit(<<"kilograms">>) -> kg;
 binary_to_canonical_unit(<<"kg">>) -> kg;
+binary_to_canonical_unit(<<"lb">>) -> pound;
+binary_to_canonical_unit(<<"lbs">>) -> pound;
 binary_to_canonical_unit(<<"pound">>) -> pound;
 binary_to_canonical_unit(<<"pounds">>) -> pound;
 binary_to_canonical_unit(<<"ounce">>) -> ounce;
@@ -130,7 +132,10 @@ binary_to_canonical_unit(<<"oz">>) -> ounce;
 binary_to_canonical_unit(<<"milliliter">>) -> ml;
 binary_to_canonical_unit(<<"milliliters">>) -> ml;
 binary_to_canonical_unit(<<"ml">>) -> ml;
+binary_to_canonical_unit(<<"l">>) -> liter;
 binary_to_canonical_unit(<<"liter">>) -> liter;
+binary_to_canonical_unit(<<"liters">>) -> liter;
+binary_to_canonical_unit(<<"kl">>) -> kiloliter;
 binary_to_canonical_unit(<<"kiloliter">>) -> kiloliter;
 binary_to_canonical_unit(<<"kiloliters">>) -> kiloliter;
 binary_to_canonical_unit(<<"quart">>) -> quart;
@@ -140,6 +145,10 @@ binary_to_canonical_unit(<<"qts">>) -> quart;
 binary_to_canonical_unit(<<"gallon">>) -> gallon;
 binary_to_canonical_unit(<<"gallons">>) -> gallon;
 binary_to_canonical_unit(<<"cc">>) -> cc;
+binary_to_canonical_unit(<<"floz">>) -> floz;
+binary_to_canonical_unit(<<"fluid oz">>) -> floz;
+binary_to_canonical_unit(<<"fluid ounce">>) -> floz;
+binary_to_canonical_unit(<<"fluid ounces">>) -> floz;
 % bandwidth
 binary_to_canonical_unit(<<"bit">>) -> bit;
 binary_to_canonical_unit(<<"bits">>) -> bit;
@@ -201,6 +210,8 @@ canonical_unit_to_binary(_, kg) -> <<"kilograms">>;
 % volume
 canonical_unit_to_binary(_, ml) -> <<"ml">>;
 canonical_unit_to_binary(_, cc) -> <<"cc">>;
+canonical_unit_to_binary(1, floz) -> <<"fluid ounce">>;
+canonical_unit_to_binary(_, floz) -> <<"fluid ounces">>;
 % bandwidth
 % distance
 canonical_unit_to_binary(1, mm) -> <<"millimeter">>;
