@@ -42,26 +42,26 @@ end_per_testcase(_, _Config) ->
 unit_coverage(_) ->
     TestCases = [
         % weight
-        {<<"1">>, <<"g">>, <<"mg">>, <<"1 gram is equal to 1000 milligrams">>},
-        {<<"1">>, <<"kg">>, <<"g">>, <<"1 kilogram is equal to 1000 grams">>},
-        {<<"1">>, <<"pound">>, <<"ounce">>, <<"1 pound is equal to 16 ounces">>},
+        {<<"1">>, <<"g">>, <<"mg">>, <<"1 g = 1000 mg">>},
+        {<<"1">>, <<"kg">>, <<"g">>, <<"1 kg = 1000 g">>},
+        {<<"1">>, <<"pound">>, <<"ounce">>, <<"1 pound = 16 ounce">>},
         % volume
-        {<<"1">>, <<"liter">>, <<"ml">>, <<"1 liter is equal to 1000 ml">>},
-        {<<"1">>, <<"kiloliter">>, <<"cc">>, <<"1 kiloliter is equal to 1000000 cc">>},
-        {<<"1">>, <<"gallon">>, <<"qt">>, <<"1 gallon is equal to 4 quarts">>},
-        {<<"1">>, <<"gallon">>, <<"floz">>, <<"1 gallon is equal to 128 fluid ounces">>},
+        {<<"1">>, <<"liter">>, <<"ml">>, <<"1 liter = 1000 ml">>},
+        {<<"1">>, <<"kiloliter">>, <<"cc">>, <<"1 kiloliter = 1000000 cc">>},
+        {<<"1">>, <<"gallon">>, <<"qt">>, <<"1 gallon = 4 qt">>},
+        {<<"1">>, <<"gallon">>, <<"floz">>, <<"1 gallon = 128 floz">>},
         % bandwidth
-        {<<"1">>, <<"byte">>, <<"bit">>, <<"1 byte is equal to 8 bits">>},
-        {<<"1">>, <<"kb">>, <<"kilobit">>, <<"1 kilobyte is equal to 8 kilobits">>},
-        {<<"1">>, <<"mb">>, <<"megabit">>, <<"1 megabyte is equal to 8 megabits">>},
-        {<<"1">>, <<"gb">>, <<"gigabit">>, <<"1 gigabyte is equal to 8 gigabits">>},
-        {<<"1">>, <<"cm">>, <<"mm">>, <<"1 centimeter is equal to 10 millimeters">>},
-        {<<"1">>, <<"km">>, <<"m">>, <<"1 kilometer is equal to 1000 meters">>},
+        {<<"1">>, <<"byte">>, <<"bit">>, <<"1 byte = 8 bit">>},
+        {<<"1">>, <<"kilobyte">>, <<"kilobit">>, <<"1 kilobyte = 8 kilobit">>},
+        {<<"1">>, <<"megabyte">>, <<"megabit">>, <<"1 megabyte = 8 megabit">>},
+        {<<"1">>, <<"gigabyte">>, <<"gigabit">>, <<"1 gigabyte = 8 gigabit">>},
+        {<<"1">>, <<"cm">>, <<"mm">>, <<"1 cm = 10 mm">>},
+        {<<"1">>, <<"km">>, <<"m">>, <<"1 km = 1000 m">>},
         % distance
-        {<<"1">>, <<"mile">>, <<"yard">>, <<"1 mile is equal to 1760 yards">>},
-        {<<"1">>, <<"foot">>, <<"inch">>, <<"1 foot is equal to 12 inches">>},
+        {<<"1">>, <<"mile">>, <<"yard">>, <<"1 mile = 1760 yard">>},
+        {<<"1">>, <<"foot">>, <<"inch">>, <<"1 foot = 12 inch">>},
         % temperature
-        {<<"1">>, <<"celsius">>, <<"fahrenheit">>, <<"1 celsius is equal to 33.8 fahrenheit">>}
+        {<<"1">>, <<"celsius">>, <<"fahrenheit">>, <<"1 celsius = 33.8 fahrenheit">>}
     ],
     F = fun({UnitNum, UnitFrom, UnitTo, ExpectedShort}, Acc) ->
             Question = <<"convert ", UnitNum/binary, UnitFrom/binary, " to ", UnitTo/binary>>,

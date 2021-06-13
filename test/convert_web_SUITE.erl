@@ -75,7 +75,7 @@ convert_json(_) ->
     ExpectedResponse = [
         #{
             <<"question">> => <<"convert 20 km to miles">>,
-            <<"short">> => <<"20 kilometers is equal to 12.427424 miles">>,
+            <<"short">> => <<"20 km = 12.427424 miles">>,
             <<"type">> => <<"text">>
         }
     ],
@@ -93,7 +93,7 @@ convert_unrecognized_syntax(_) ->
     ok.
 
 convert_unsupported_unit(_) ->
-    Question = "convert 5 smoots to meters",
+    Question = "convert 5 jujumeters to meters",
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = request_json(Question),
     Response = decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
