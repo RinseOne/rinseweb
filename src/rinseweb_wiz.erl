@@ -28,8 +28,9 @@
 
 -spec answer(question()) -> answers().
 answer(Question) ->
-    {Handler, Args} = find_handler(Question, rinseweb_manifests:get_all()),
-    [Handler:answer(Question, Args)].
+    TrimmedQuestion = binary_trim(Question),
+    {Handler, Args} = find_handler(TrimmedQuestion, rinseweb_manifests:get_all()),
+    [Handler:answer(TrimmedQuestion, Args)].
 
 %%====================================================================
 %% Internal functions
@@ -61,3 +62,16 @@ find_handler_check_result({match, Handler, Args}, _Question, _Rest) ->
     {Handler, Args};
 find_handler_check_result(nomatch, Question, Rest) ->
     find_handler(Question, Rest).
+
+-spec binary_trim(binary()) -> binary().
+binary_trim(Bin) ->
+    binary_ltrim(binary_rtrim(Bin)).
+
+-spec binary_ltrim(binary()) -> binary().
+binary_ltrim(<<32, Bin/binary>>) -> binary_ltrim(Bin);
+binary_ltrim(Bin) -> Bin.
+
+-spec binary_rtrim(binary()) -> binary().
+binary_rtrim(Bin) when binary_part(Bin, {byte_size(Bin), -1}) =:= <<32>> ->
+    binary_rtrim(binary_part(Bin, {0, byte_size(Bin) - 1}));
+binary_rtrim(Bin) -> Bin.
