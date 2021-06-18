@@ -11,6 +11,8 @@
 
 %% Tests
 -export([convert_json/1]).
+-export([convert_json_extra_whitespace/1]).
+-export([convert_json_case_insensitive/1]).
 -export([convert_unrecognized_syntax/1]).
 -export([convert_unsupported_unit/1]).
 -export([convert_invalid_number/1]).
@@ -22,6 +24,8 @@
 all() ->
     [
         convert_json,
+        convert_json_extra_whitespace,
+        convert_json_case_insensitive,
         convert_unrecognized_syntax,
         convert_unsupported_unit,
         convert_invalid_number
@@ -75,6 +79,36 @@ convert_json(_) ->
     ExpectedResponse = [
         #{
             <<"question">> => <<"convert 20 km to miles">>,
+            <<"short">> => <<"20 km = 12.427424 miles">>,
+            <<"type">> => <<"text">>
+        }
+    ],
+    ExpectedResponse = Response,
+    ok.
+
+convert_json_extra_whitespace(_) ->
+    Question = "   convert 20 km to miles  ",
+    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = request_json(Question),
+    Response = decode_response_body(ResponseBody),
+    true = lists:member({"content-type","application/json"}, Headers),
+    ExpectedResponse = [
+        #{
+            <<"question">> => <<"convert 20 km to miles">>,
+            <<"short">> => <<"20 km = 12.427424 miles">>,
+            <<"type">> => <<"text">>
+        }
+    ],
+    ExpectedResponse = Response,
+    ok.
+
+convert_json_case_insensitive(_) ->
+    Question = "ConVerT 20 km to miles",
+    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = request_json(Question),
+    Response = decode_response_body(ResponseBody),
+    true = lists:member({"content-type","application/json"}, Headers),
+    ExpectedResponse = [
+        #{
+            <<"question">> => <<"ConVerT 20 km to miles">>,
             <<"short">> => <<"20 km = 12.427424 miles">>,
             <<"type">> => <<"text">>
         }
