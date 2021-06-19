@@ -1,5 +1,5 @@
 {application, rinseweb,
- [{description, "Instant Answers Web Service"},
+ [{description, "rinse is not a search engine"},
   {vsn, "0.1.1"},
   {registered, []},
   {mod, {rinseweb_app, []}},
@@ -12,6 +12,6 @@
   {env,[]},
   {modules, []},
 
-  {licenses, ["Apache 2.0"]},
+  {licenses, ["GPLv3"]},
   {links, []}
  ]}.
