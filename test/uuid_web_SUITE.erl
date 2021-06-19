@@ -35,27 +35,13 @@ end_per_testcase(_, _Config) ->
     ok.
 
 %% ============================================================================
-%% Helpers
-%% ============================================================================
-
-uri(Question) ->
-    "http://localhost:8080/answer/" ++ edoc_lib:escape_uri(Question).
-
-request_json(Question) ->
-    Request = {uri(Question), [{"Accept", "application/json"}]},
-    httpc:request(get, Request, [], []).
-
-decode_response_body(ResponseBody) ->
-    jsx:decode(list_to_binary(ResponseBody), [return_maps]).
-
-%% ============================================================================
 %% Tests
 %% ============================================================================
 
 uuid_simple(_) ->
     Question = "uuid",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = request_json(Question),
-    Response = decode_response_body(ResponseBody),
+    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = helpers:request_json(Question),
+    Response = helpers:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
     [Response0|_] = Response,
     <<"uuid">> = maps:get(<<"question">>, Response0),
