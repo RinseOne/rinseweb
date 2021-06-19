@@ -40,8 +40,8 @@ end_per_testcase(_, _Config) ->
 
 uuid_simple(_) ->
     Question = "uuid",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = helpers:request_json(Question),
-    Response = helpers:decode_response_body(ResponseBody),
+    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
+    Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
     [Response0|_] = Response,
     <<"uuid">> = maps:get(<<"question">>, Response0),

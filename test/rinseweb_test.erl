@@ -1,4 +1,4 @@
--module(helpers).
+-module(rinseweb_test).
 
 %% API
 -export([question_uri/1]).
