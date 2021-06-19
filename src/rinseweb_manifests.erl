@@ -38,6 +38,15 @@ get_all() ->
             ],
             handler => rinseweb_wiz_convert
         },
+        #{ % UUID
+            matches => [
+                #{
+                    type => regex,
+                    value => <<"^(?i:uuid)$">>
+                }
+            ],
+            handler => rinseweb_wiz_uuid
+        },
         #{ % fallthrough default
             matches => [
                 #{

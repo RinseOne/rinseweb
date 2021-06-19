@@ -48,16 +48,6 @@ end_per_testcase(_, _Config) ->
 %% Helpers
 %% ============================================================================
 
-uri(Question) ->
-    "http://localhost:8080/answer/" ++ edoc_lib:escape_uri(Question).
-
-request_json(Question) ->
-    Request = {uri(Question), [{"Accept", "application/json"}]},
-    httpc:request(get, Request, [], []).
-
-decode_response_body(ResponseBody) ->
-    jsx:decode(list_to_binary(ResponseBody), [return_maps]).
-
 unregonized_command(Question) when is_list(Question) ->
     [
         #{
@@ -73,8 +63,8 @@ unregonized_command(Question) when is_list(Question) ->
 
 convert_json(_) ->
     Question = "convert 20 km to miles",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = request_json(Question),
-    Response = decode_response_body(ResponseBody),
+    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
+    Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
     ExpectedResponse = [
         #{
@@ -88,8 +78,8 @@ convert_json(_) ->
 
 convert_json_extra_whitespace(_) ->
     Question = "   convert 20 km to miles  ",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = request_json(Question),
-    Response = decode_response_body(ResponseBody),
+    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
+    Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
     ExpectedResponse = [
         #{
@@ -103,8 +93,8 @@ convert_json_extra_whitespace(_) ->
 
 convert_json_case_insensitive(_) ->
     Question = "ConVerT 20 km to miles",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = request_json(Question),
-    Response = decode_response_body(ResponseBody),
+    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
+    Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
     ExpectedResponse = [
         #{
@@ -118,8 +108,8 @@ convert_json_case_insensitive(_) ->
 
 convert_unrecognized_syntax(_) ->
     Question = "convert foobar",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = request_json(Question),
-    Response = decode_response_body(ResponseBody),
+    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
+    Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
     ExpectedResponse = unregonized_command(Question),
     io:format("Expected response: ~p~n", [ExpectedResponse]),
@@ -128,8 +118,8 @@ convert_unrecognized_syntax(_) ->
 
 convert_unsupported_unit(_) ->
     Question = "convert 5 jujumeters to meters",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = request_json(Question),
-    Response = decode_response_body(ResponseBody),
+    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
+    Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
     [<<"shrug">>] = Response,
     ok.
@@ -142,8 +132,8 @@ convert_invalid_number(_) ->
     F = fun(Num, Acc) ->
             Question = "convert " ++ Num ++ " kg to pounds",
             ExpectedResponse = unregonized_command(Question),
-            {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = request_json(Question),
-            Response = decode_response_body(ResponseBody),
+            {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
+            Response = rinseweb_test:decode_response_body(ResponseBody),
             true = lists:member({"content-type","application/json"}, Headers),
             ExpectedResponse = Response,
             Acc
