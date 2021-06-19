@@ -38,6 +38,15 @@ get_all() ->
             ],
             handler => rinseweb_wiz_convert
         },
+        #{ % hash
+            matches => [
+                #{
+                    type => regex,
+                    value => <<"^(sha|sha2|md5)\s+(.*)$">>
+                }
+            ],
+            handler => rinseweb_wiz_hash
+        },
         #{ % UUID
             matches => [
                 #{
