@@ -13,6 +13,7 @@
 -export([sha/1]).
 -export([sha2/1]).
 -export([md5/1]).
+-export([separator_greedy_match/1]).
 
 %% ============================================================================
 %% ct functions
@@ -22,7 +23,8 @@ all() ->
     [
         sha,
         sha2,
-        md5
+        md5,
+        separator_greedy_match
     ].
 
 init_per_suite(Config) ->
@@ -80,6 +82,21 @@ md5(_) ->
     ExpectedResponse = [
         #{
             <<"question">> => <<"md5 hello">>,
+            <<"short">> => <<"5d41402abc4b2a76b9719d911017c592">>,
+            <<"type">> => <<"text">>
+        }
+    ],
+    ExpectedResponse = Response,
+    ok.
+
+separator_greedy_match(_) ->
+    Question = "md5         hello",
+    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
+    Response = rinseweb_test:decode_response_body(ResponseBody),
+    true = lists:member({"content-type","application/json"}, Headers),
+    ExpectedResponse = [
+        #{
+            <<"question">> => <<"md5         hello">>,
             <<"short">> => <<"5d41402abc4b2a76b9719d911017c592">>,
             <<"type">> => <<"text">>
         }
