@@ -12,6 +12,8 @@
 %% Tests
 -export([web_root_response_contains_form/1]).
 -export([web_app_js_loads/1]).
+-export([web_about_page_loads/1]).
+-export([web_commands_page_loads/1]).
 
 %% ============================================================================
 %% ct functions
@@ -20,7 +22,9 @@
 all() ->
     [
         web_root_response_contains_form,
-        web_app_js_loads
+        web_app_js_loads,
+        web_about_page_loads,
+        web_commands_page_loads
     ].
 
 init_per_suite(Config) ->
@@ -48,4 +52,12 @@ web_root_response_contains_form(_) ->
 
 web_app_js_loads(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, _Headers, _ResponseBody}} = httpc:request("http://localhost:8080/assets/app.js"),
+    ok.
+
+web_about_page_loads(_) ->
+    {ok, {{"HTTP/1.1", 200, "OK"}, _Headers, _ResponseBody}} = httpc:request("http://localhost:8080/about"),
+    ok.
+
+web_commands_page_loads(_) ->
+    {ok, {{"HTTP/1.1", 200, "OK"}, _Headers, _ResponseBody}} = httpc:request("http://localhost:8080/commands"),
     ok.
