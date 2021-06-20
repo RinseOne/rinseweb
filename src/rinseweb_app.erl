@@ -14,6 +14,8 @@ start(_StartType, _StartArgs) ->
         {'_', [
             {"/", rinseweb_h_root, []},
             {"/answer/[:question]", rinseweb_h_answer, []},
+            {"/about", cowboy_static, {priv_file, rinseweb, "static/html/about.html"}},
+            {"/commands", cowboy_static, {priv_file, rinseweb, "static/html/commands.html"}},
             {"/assets/[...]", cowboy_static, {priv_dir, rinseweb, "static/assets"}}
         ]}
     ]),
