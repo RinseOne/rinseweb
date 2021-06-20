@@ -13,9 +13,9 @@
 %%====================================================================
 
 -spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_wiz:answer().
-answer(<<"uuid">>, []) ->
+answer(Question, []) ->
     #{
-        question => <<"uuid">>,
+        question => Question,
         type => text,
         short => list_to_binary(uuid:uuid_to_string(uuid:get_v4()))
     }.
