@@ -38,6 +38,19 @@ get_all() ->
             ],
             handler => rinseweb_wiz_convert
         },
+        #{ % unix timestamp
+            matches => [
+                #{
+                    type => regex,
+                    value => <<"^([\\d]{10}|[\\d]{13})$">>
+                },
+                #{
+                    type => regex,
+                    value => <<"^(?i:unix timestamp|now|timestamp)$">>
+                }
+            ],
+            handler => rinseweb_wiz_timestamp
+        },
         #{ % hash
             matches => [
                 #{
