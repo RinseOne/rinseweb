@@ -24,6 +24,12 @@
         currently supports the following commands:
         <ul>
             <li>
+                any 10-digit number: taken as Unix timestamp, converted to UTC date and time
+            </li>
+            <li>
+                any 13-digit number: taken as Unix milliseconds, converted to UTC date and time
+            </li>
+            <li>
                 <code>convert</code>: convert between arbitrary units. Examples:<br/>
                 <code>convert 14kg to pounds</code><br/>
                 <code>convert 16 weeks to months</code><br/>
@@ -32,6 +38,9 @@
             <li>
                 <code>md5</code>: compute MD5 hash of the string that follows. Example:
                 <code>md5 hello there</code>
+            </li>
+            <li>
+                <code>now</code> (also <code>timestamp</code> or <code>unix timestamp</code>): current unix timestamp
             </li>
             <li>
                 <code>sha</code>: compute SHA1 hash of the string that follows. Example:
