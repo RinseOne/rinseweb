@@ -12,6 +12,7 @@
 %% Tests
 -export([seconds/1]).
 -export([milliseconds/1]).
+-export([timestamp/1]).
 
 %% ============================================================================
 %% ct functions
@@ -20,7 +21,8 @@
 all() ->
     [
         seconds,
-        milliseconds
+        milliseconds,
+        timestamp
     ].
 
 init_per_suite(Config) ->
@@ -69,3 +71,22 @@ milliseconds(_) ->
     ],
     ExpectedResponse = Response,
     ok.
+
+timestamp(_) ->
+    TestStartTime = erlang:system_time(second),
+    Questions = ["now", "timestamp", "unix timestamp"],
+    F = fun(Question, Acc) ->
+            {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
+            [Answer|_] = rinseweb_test:decode_response_body(ResponseBody),
+            true = lists:member({"content-type","application/json"}, Headers),
+            <<"text">> = maps:get(<<"type">>, Answer),
+            ExpectedQuestion = list_to_binary(Question),
+            ExpectedQuestion = maps:get(<<"question">>, Answer),
+            AnswerTimeBin = maps:get(<<"short">>, Answer),
+            AnswerTimeInt = binary_to_integer(AnswerTimeBin),
+            OneMinFromTestStart = TestStartTime + 60,
+            true = AnswerTimeInt >= TestStartTime,
+            true = AnswerTimeInt < OneMinFromTestStart,
+            Acc
+    end,
+    ok = lists:foldr(F, ok, Questions).
