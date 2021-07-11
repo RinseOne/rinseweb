@@ -60,6 +60,10 @@ unit_coverage(_) ->
         % distance
         {<<"1">>, <<"mile">>, <<"yard">>, <<"1 mile = 1760 yard">>},
         {<<"1">>, <<"foot">>, <<"inch">>, <<"1 foot = 12 inch">>},
+        % area
+        {<<"1">>, <<"meter^2">>, <<"foot^2">>, <<"1 meter^2 = 10.76391 foot^2">>},
+        % volume
+        {<<"1">>, <<"meter^3">>, <<"foot^3">>, <<"1 meter^3 = 35.314667 foot^3">>},
         % temperature
         {<<"1">>, <<"celsius">>, <<"fahrenheit">>, <<"1 celsius = 33.8 fahrenheit">>}
     ],
@@ -80,7 +84,8 @@ unit_invalid(_) ->
         {<<"kg">>, <<"foo">>},
         {<<"foo">>, <<"kg">>},
         {<<"foo">>, <<"bar">>},
-        {<<"kg">>, <<"mm">>}
+        {<<"kg">>, <<"mm">>},
+        {<<"meters^2">>, <<"^2">>}
     ],
     UnitNum = <<"1">>,
     F = fun({UnitFrom, UnitTo}, Acc) ->
