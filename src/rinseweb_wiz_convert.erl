@@ -92,6 +92,7 @@ binary_to_number(B) ->
 string_to_number([]) -> undefined;
 string_to_number("conformability error") -> undefined;
 string_to_number([$U,$n,$k,$n,$o,$w,$n|_]) -> undefined; % Handles "Unknown unit 'foo'" error
+string_to_number([$E,$r,$r,$o,$r|_]) -> undefined; % Handles "Error in 'foo': Parse error" error
 string_to_number(S) ->
     case string:to_float(S) of
         {error, no_float} -> list_to_integer(S);
@@ -108,7 +109,7 @@ binary_to_canonical_unit(<<"celsius">>) -> <<"celsius">>;
 binary_to_canonical_unit(<<"f">>) -> <<"fahrenheit">>;
 binary_to_canonical_unit(<<"fahrenheit">>) -> <<"fahrenheit">>;
 binary_to_canonical_unit(UnitBin) ->
-    validate_unit(re:run(UnitBin, <<"^[a-zA-Z]+$">>, [{capture, none}]), UnitBin).
+    validate_unit(re:run(UnitBin, <<"^[a-zA-Z]+[\\^]?[2-3]?$">>, [{capture, none}]), UnitBin).
 
 -spec validate_unit(atom(), binary()) -> unit_or_unknown().
 validate_unit(match, Unit) when byte_size(Unit) < 30 -> Unit;

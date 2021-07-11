@@ -33,7 +33,7 @@ get_all() ->
             matches => [
                 #{
                     type => regex,
-                    value => <<"^(?i:convert)\s+([-]?[0-9]*[.]?[0-9]+)\s*([a-zA-Z]+)\s+to\s+([a-zA-Z]+)$">>
+                    value => <<"^(?i:convert)\\s+([-]?[0-9]*[.]?[0-9]+)\\s*([a-zA-Z]+[\\^]?[2-3]?)\\s+to\\s+([a-zA-Z]+[\\^]?[2-3]?)$">>
                 }
             ],
             handler => rinseweb_wiz_convert
