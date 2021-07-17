@@ -23,3 +23,10 @@ Run tests
 ```
 make tests
 ```
+
+## Convenience
+
+Update version to prepare for release; for example, to set version `1.2.3`:
+```
+make set-version version=1.2.3
+```
