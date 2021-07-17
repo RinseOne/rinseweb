@@ -25,4 +25,8 @@ doc:
 tests:
 	@$(REBAR3) ct --logdir logs/ct
 
-.PHONY: all compile dialyze deps rel run doc tests
+set-version:
+	@sed -i "s/{rinseweb, \"[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+\"}/{rinseweb, \"$(version)\"}/" rebar.config
+	@sed -i "s/{vsn, \"[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+\"}/{vsn, \"$(version)\"}/" src/rinseweb.app.src
+
+.PHONY: all compile dialyze deps rel run doc tests set-version
