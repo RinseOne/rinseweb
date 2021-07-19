@@ -28,10 +28,12 @@ content_types_provided(Req, State) ->
 
 answer_to_html(Req, State) ->
     Question = cowboy_req:binding(question, Req, <<>>),
-    Answers = rinseweb_wiz:answer(Question),
-    Answer = answers_to_binary(Answers),
+    #{
+        answers := [#{type := Type, answer := AnswerCustom}|_]
+    } = rinseweb_wiz:answer(Question),
+    AnswerBin = answer_to_binary(Type, AnswerCustom),
     QuestionSafe = htmlentities(Question),
-    AnswerSafe = htmlentities(Answer),
+    AnswerSafe = htmlentities(AnswerBin),
     Body = <<"<html>
 <head>
     <meta charset=\"utf-8\">
@@ -64,16 +66,33 @@ answer_to_json(Req, State) ->
 
 answer_to_text(Req, State) ->
     Question = cowboy_req:binding(question, Req, <<>>),
-    [#{short := Answer}] = rinseweb_wiz:answer(Question),
-    {Answer, Req, State}.
+    #{
+        answers := [#{type := Type, answer := AnswerCustom}|_]
+    } = rinseweb_wiz:answer(Question),
+    {answer_to_binary(Type, AnswerCustom), Req, State}.
 
 %%====================================================================
 %% Internal functions
 %%====================================================================
 
-answers_to_binary([shrug]) -> unicode:characters_to_binary("¯\\_(ツ)_/¯");
-answers_to_binary([#{short := Answer}]) -> Answer.
+-spec answer_to_binary(atom(), map()) -> binary().
+answer_to_binary(shrug, _) -> unicode:characters_to_binary("¯\\_(ツ)_/¯");
+answer_to_binary(text, #{text := Text}) -> Text;
+answer_to_binary(hash, #{hash := Hash}) -> Hash;
+answer_to_binary(conversion_result, AnswerCustom) ->
+    UnitFrom = maps:get(unit_from_name, AnswerCustom),
+    UnitFromNum = maps:get(unit_from_number, AnswerCustom),
+    UnitTo = maps:get(unit_to_name, AnswerCustom),
+    UnitToNum = maps:get(unit_to_number, AnswerCustom),
+    UnitFromNumBin = number_to_binary(UnitFromNum),
+    UnitToNumBin = number_to_binary(UnitToNum),
+    <<UnitFromNumBin/binary, " ", UnitFrom/binary, " = ", UnitToNumBin/binary, " ", UnitTo/binary>>.
 
+-spec number_to_binary(number()) -> binary().
+number_to_binary(Num) when is_integer(Num) -> integer_to_binary(Num);
+number_to_binary(Num) when is_float(Num) -> float_to_binary(Num, [{decimals, 10}, compact]).
+
+-spec htmlentities(binary()) -> binary().
 htmlentities(Bin) when is_binary(Bin) ->
     ReplaceFuns = [
         fun(X) when is_binary(X) -> binary:replace(X, <<$<>>, <<"&lt;">>, [global]) end,

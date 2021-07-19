@@ -37,7 +37,7 @@ answer_using_canonical_units(FromNumBin, FromUnit, ToUnit) ->
     ConversionResult = convert(FromNum, FromUnit, ToUnit),
     answer_conversion_result(FromNum, FromUnit, ToUnit, ConversionResult).
 
--spec answer_conversion_result(binary(), unit(), unit(), undefined | number()) -> rinseweb_wiz:answer().
+-spec answer_conversion_result(number(), unit(), unit(), undefined | number()) -> rinseweb_wiz:answer().
 answer_conversion_result(_, _, _, undefined) -> rinseweb_wiz:shrug(?ANSWER_SOURCE);
 answer_conversion_result(FromNum, FromUnit, ToUnit, ToNum) ->
     AnswerCustom = #{

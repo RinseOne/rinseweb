@@ -23,7 +23,7 @@
     source := answer_source(),
     answer => answer_custom()
 }.
--type answer_type() :: shrug | text. % TODO complete
+-type answer_type() :: shrug | text | conversion_result | hash.
 -type answer_source() :: atom().
 -type answer_custom() :: map().
 
