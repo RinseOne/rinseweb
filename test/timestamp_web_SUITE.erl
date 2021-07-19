@@ -39,6 +39,24 @@ end_per_testcase(_, _Config) ->
     ok.
 
 %% ============================================================================
+%% Helpers
+%% ============================================================================
+
+result(Question, Text) ->
+    #{
+        <<"question">> => list_to_binary(Question),
+        <<"answers">> => [
+            #{
+                <<"source">> => <<"timestamp">>,
+                <<"type">> => <<"text">>,
+                <<"answer">> => #{
+                    <<"text">> => Text
+                }
+            }
+        ]
+    }.
+
+%% ============================================================================
 %% Tests
 %% ============================================================================
 
@@ -47,13 +65,7 @@ seconds(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = [
-        #{
-            <<"question">> => <<"1624433430">>,
-            <<"short">> => <<"2021-06-23 07:30:30 UTC">>,
-            <<"type">> => <<"text">>
-        }
-    ],
+    ExpectedResponse = result(Question, <<"2021-06-23 07:30:30 UTC">>),
     ExpectedResponse = Response,
     ok.
 
@@ -62,13 +74,7 @@ milliseconds(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = [
-        #{
-            <<"question">> => <<"1624433430000">>,
-            <<"short">> => <<"2021-06-23 07:30:30 UTC">>,
-            <<"type">> => <<"text">>
-        }
-    ],
+    ExpectedResponse = result(Question, <<"2021-06-23 07:30:30 UTC">>),
     ExpectedResponse = Response,
     ok.
 
@@ -77,12 +83,15 @@ timestamp(_) ->
     Questions = ["now", "timestamp", "unix timestamp"],
     F = fun(Question, Acc) ->
             {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-            [Answer|_] = rinseweb_test:decode_response_body(ResponseBody),
+            %[Answer|_] = rinseweb_test:decode_response_body(ResponseBody),
             true = lists:member({"content-type","application/json"}, Headers),
-            <<"text">> = maps:get(<<"type">>, Answer),
+            ResponseMap = rinseweb_test:decode_response_body(ResponseBody),
             ExpectedQuestion = list_to_binary(Question),
-            ExpectedQuestion = maps:get(<<"question">>, Answer),
-            AnswerTimeBin = maps:get(<<"short">>, Answer),
+            ExpectedQuestion = maps:get(<<"question">>, ResponseMap),
+            [Answer|_] = maps:get(<<"answers">>, ResponseMap),
+            <<"text">> = maps:get(<<"type">>, Answer),
+            <<"timestamp">> = maps:get(<<"source">>, Answer),
+            AnswerTimeBin = maps:get(<<"text">>, maps:get(<<"answer">>, Answer)),
             AnswerTimeInt = binary_to_integer(AnswerTimeBin),
             OneMinFromTestStart = TestStartTime + 60,
             true = AnswerTimeInt >= TestStartTime,

@@ -8,6 +8,7 @@
 %% API
 -export([answer/1]).
 -export([answer/3]).
+-export([answer_text/3]).
 -export([shrug/1]).
 
 %% Types
@@ -50,6 +51,13 @@ answer(Type, Source, Custom) ->
         source => Source,
         answer => Custom
     }.
+
+-spec answer_text(answer_type(), answer_source(), binary()) -> answer().
+answer_text(Type, Source, Bin) ->
+    AnswerCustom = #{
+        text => Bin
+    },
+    answer(Type, Source, AnswerCustom).
 
 -spec shrug(answer_source()) -> answer().
 shrug(Source) ->
