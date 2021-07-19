@@ -28,10 +28,8 @@ content_types_provided(Req, State) ->
 
 answer_to_html(Req, State) ->
     Question = cowboy_req:binding(question, Req, <<>>),
-    #{
-        answers := [#{type := Type, answer := AnswerCustom}|_]
-    } = rinseweb_wiz:answer(Question),
-    AnswerBin = answer_to_binary(Type, AnswerCustom),
+    Result = rinseweb_wiz:answer(Question),
+    AnswerBin = result_to_binary(Result),
     QuestionSafe = htmlentities(Question),
     AnswerSafe = htmlentities(AnswerBin),
     Body = <<"<html>
@@ -66,17 +64,19 @@ answer_to_json(Req, State) ->
 
 answer_to_text(Req, State) ->
     Question = cowboy_req:binding(question, Req, <<>>),
-    #{
-        answers := [#{type := Type, answer := AnswerCustom}|_]
-    } = rinseweb_wiz:answer(Question),
-    {answer_to_binary(Type, AnswerCustom), Req, State}.
+    Result = rinseweb_wiz:answer(Question),
+    AnswerBin = result_to_binary(Result),
+    {AnswerBin, Req, State}.
 
 %%====================================================================
 %% Internal functions
 %%====================================================================
 
+result_to_binary(#{answers := []}) -> unicode:characters_to_binary("¯\\_(ツ)_/¯");
+result_to_binary(#{answers := [#{type := Type, answer := AnswerCustom}|_]}) ->
+    answer_to_binary(Type, AnswerCustom).
+
 -spec answer_to_binary(atom(), map()) -> binary().
-answer_to_binary(shrug, _) -> unicode:characters_to_binary("¯\\_(ツ)_/¯");
 answer_to_binary(text, #{text := Text}) -> Text;
 answer_to_binary(hash, #{hash := Hash}) -> Hash;
 answer_to_binary(conversion_result, AnswerCustom) ->
