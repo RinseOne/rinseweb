@@ -38,27 +38,32 @@ end_per_testcase(_, _Config) ->
     ok.
 
 %% ============================================================================
+%% Helpers
+%% ============================================================================
+
+result(Text) ->
+    #{
+        type => text,
+        source => timestamp,
+        answer => #{
+            text => Text
+        }
+    }.
+
+%% ============================================================================
 %% Tests
 %% ============================================================================
 
 seconds(_) ->
     Question = <<"1624433430">>,
-    ExpectedAnswer = #{
-        question => Question,
-        type => text,
-        short => <<"2021-06-23 07:30:30 UTC">>
-    },
+    ExpectedAnswer = result(<<"2021-06-23 07:30:30 UTC">>),
     Answer = rinseweb_wiz_timestamp:answer(Question, [<<"1624433430">>]),
     ExpectedAnswer = Answer,
     ok.
 
 milliseconds(_) ->
     Question = <<"1624433430000">>,
-    ExpectedAnswer = #{
-        question => Question,
-        type => text,
-        short => <<"2021-06-23 07:30:30 UTC">>
-    },
+    ExpectedAnswer = result(<<"2021-06-23 07:30:30 UTC">>),
     Answer = rinseweb_wiz_timestamp:answer(Question, [<<"1624433430">>]),
     ExpectedAnswer = Answer,
     ok.
@@ -68,11 +73,11 @@ timestamp(_) ->
     Questions = [<<"now">>, <<"timestamp">>, <<"unix timestamp">>],
     F = fun (Question, Acc) ->
             Answer = rinseweb_wiz_timestamp:answer(Question, []),
-            AnswerQuestion = maps:get(question, Answer),
-            Question = AnswerQuestion,
             AnswerType = maps:get(type, Answer),
             text = AnswerType,
-            AnswerTimeBin = maps:get(short, Answer),
+            AnswerSource = maps:get(source, Answer),
+            timestamp = AnswerSource,
+            AnswerTimeBin = maps:get(text, maps:get(answer, Answer)),
             AnswerTimeInt = binary_to_integer(AnswerTimeBin),
             OneMinFromTestStart = TestStartTime + 60,
             true = AnswerTimeInt >= TestStartTime,

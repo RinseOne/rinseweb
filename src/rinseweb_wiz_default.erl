@@ -13,9 +13,8 @@
 %%====================================================================
 
 -spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_wiz:answer().
-answer(Question, _Args) ->
+answer(_Question, _Args) ->
     #{
-        question => Question,
-        type => text,
-        short => <<"No clue">>
+        type => shrug,
+        source => default
     }.

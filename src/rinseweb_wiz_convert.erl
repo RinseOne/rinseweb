@@ -12,39 +12,41 @@
 -type unit_or_unknown() :: binary() | unknown.
 -type unit() :: binary().
 
+-define(ANSWER_SOURCE, convert).
+-define(ANSWER_TYPE, conversion_result).
+
 %%====================================================================
 %% API
 %%====================================================================
 
 -spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_wiz:answer().
-answer(Question, [FromNumBin, FromUnitBin, ToUnitBin]) ->
+answer(_Question, [FromNumBin, FromUnitBin, ToUnitBin]) ->
     FromUnit= binary_to_canonical_unit(FromUnitBin),
     ToUnit= binary_to_canonical_unit(ToUnitBin),
-    answer_using_canonical_units(Question, FromNumBin, FromUnit, ToUnit).
+    answer_using_canonical_units(FromNumBin, FromUnit, ToUnit).
 
 %%====================================================================
 %% Internal functions
 %%====================================================================
 
--spec answer_using_canonical_units(rinseweb_wiz:question(), binary(), unit_or_unknown(), unit_or_unknown()) -> rinseweb_wiz:answer().
-answer_using_canonical_units(_, _, unknown, _) -> shrug;
-answer_using_canonical_units(_, _, _, unknown) -> shrug;
-answer_using_canonical_units(Question, FromNumBin, FromUnit, ToUnit) ->
+-spec answer_using_canonical_units(binary(), unit_or_unknown(), unit_or_unknown()) -> rinseweb_wiz:answer().
+answer_using_canonical_units(_, unknown, _) -> rinseweb_wiz:shrug(?ANSWER_SOURCE);
+answer_using_canonical_units(_, _, unknown) -> rinseweb_wiz:shrug(?ANSWER_SOURCE);
+answer_using_canonical_units(FromNumBin, FromUnit, ToUnit) ->
     FromNum = round_precise(binary_to_number(FromNumBin)),
     ConversionResult = convert(FromNum, FromUnit, ToUnit),
-    answer_conversion_result(Question, FromNumBin, FromUnit, ToUnit, ConversionResult).
+    answer_conversion_result(FromNum, FromUnit, ToUnit, ConversionResult).
 
--spec answer_conversion_result(rinseweb_wiz:question(), binary(), unit(), unit(), number()) -> rinseweb_wiz:answer().
-answer_conversion_result(_, _, _, _, undefined) -> shrug;
-answer_conversion_result(Question, FromNumBin, FromUnit, ToUnit, ConversionResult) ->
-    ToNum = round_precise(ConversionResult),
-    ToBin = number_to_binary(ToNum),
-    Answer = <<FromNumBin/binary, " ", FromUnit/binary, " = ", ToBin/binary, " ", ToUnit/binary>>,
-    #{
-        question => Question,
-        type => text,
-        short => Answer
-    }.
+-spec answer_conversion_result(number(), unit(), unit(), undefined | number()) -> rinseweb_wiz:answer().
+answer_conversion_result(_, _, _, undefined) -> rinseweb_wiz:shrug(?ANSWER_SOURCE);
+answer_conversion_result(FromNum, FromUnit, ToUnit, ToNum) ->
+    AnswerCustom = #{
+        unit_from_name => FromUnit,
+        unit_from_number => FromNum,
+        unit_to_name => ToUnit,
+        unit_to_number => ToNum
+    },
+    rinseweb_wiz:answer(?ANSWER_TYPE, ?ANSWER_SOURCE, AnswerCustom).
 
 -spec convert(number(), unit(), unit()) -> number() | undefined.
 convert(Num, FromUnit, ToUnit) ->
@@ -74,10 +76,6 @@ round_precise(Num) when is_float(Num) ->
         round(Num) == Num -> round(Num);
         true -> Num
     end.
-
--spec number_to_binary(number()) -> binary().
-number_to_binary(Num) when is_integer(Num) -> integer_to_binary(Num);
-number_to_binary(Num) when is_float(Num) -> float_to_binary(Num, [{decimals, 10}, compact]).
 
 -spec binary_to_number(binary()) -> float() | integer().
 binary_to_number(<<".", Rest/binary>>) -> binary_to_number(<<"0.", Rest/binary>>);

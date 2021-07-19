@@ -36,48 +36,59 @@ end_per_testcase(_, _Config) ->
     ok.
 
 %% ============================================================================
+%% Helpers
+%% ============================================================================
+
+result(UnitFromNum, UnitFrom, UnitToNum, UnitTo) ->
+    #{
+        type => conversion_result,
+        source => convert,
+        answer => #{
+            unit_from_name => UnitFrom,
+            unit_from_number => UnitFromNum,
+            unit_to_name => UnitTo,
+            unit_to_number => UnitToNum
+        }
+    }.
+
+%% ============================================================================
 %% Tests
 %% ============================================================================
 
 unit_coverage(_) ->
     TestCases = [
         % weight
-        {<<"1">>, <<"g">>, <<"mg">>, <<"1 g = 1000 mg">>},
-        {<<"1">>, <<"kg">>, <<"g">>, <<"1 kg = 1000 g">>},
-        {<<"1">>, <<"pound">>, <<"ounce">>, <<"1 pound = 16 ounce">>},
+        {<<"1">>, <<"g">>, <<"mg">>, result(1, <<"g">>, 1000, <<"mg">>)},
+        {<<"1">>, <<"kg">>, <<"g">>, result(1, <<"kg">>, 1000, <<"g">>)},
+        {<<"1">>, <<"pound">>, <<"ounce">>, result(1, <<"pound">>, 16, <<"ounce">>)},
         % volume
-        {<<"1">>, <<"liter">>, <<"ml">>, <<"1 liter = 1000 ml">>},
-        {<<"1">>, <<"kiloliter">>, <<"cc">>, <<"1 kiloliter = 1000000 cc">>},
-        {<<"1">>, <<"gallon">>, <<"qt">>, <<"1 gallon = 4 qt">>},
-        {<<"1">>, <<"gallon">>, <<"floz">>, <<"1 gallon = 128 floz">>},
+        {<<"1">>, <<"liter">>, <<"ml">>, result(1, <<"liter">>, 1000, <<"ml">>)},
+        {<<"1">>, <<"kiloliter">>, <<"cc">>, result(1, <<"kiloliter">>, 1000000, <<"cc">>)},
+        {<<"1">>, <<"gallon">>, <<"qt">>, result(1, <<"gallon">>, 4, <<"qt">>)},
+        {<<"1">>, <<"gallon">>, <<"floz">>, result(1, <<"gallon">>, 128, <<"floz">>)},
         % bandwidth
-        {<<"1">>, <<"byte">>, <<"bit">>, <<"1 byte = 8 bit">>},
-        {<<"1">>, <<"kilobyte">>, <<"kilobit">>, <<"1 kilobyte = 8 kilobit">>},
-        {<<"1">>, <<"megabyte">>, <<"megabit">>, <<"1 megabyte = 8 megabit">>},
-        {<<"1">>, <<"gigabyte">>, <<"gigabit">>, <<"1 gigabyte = 8 gigabit">>},
-        {<<"1">>, <<"cm">>, <<"mm">>, <<"1 cm = 10 mm">>},
-        {<<"1">>, <<"km">>, <<"m">>, <<"1 km = 1000 m">>},
+        {<<"1">>, <<"byte">>, <<"bit">>, result(1, <<"byte">>, 8, <<"bit">>)},
+        {<<"1">>, <<"kilobyte">>, <<"kilobit">>, result(1, <<"kilobyte">>, 8, <<"kilobit">>)},
+        {<<"1">>, <<"megabyte">>, <<"megabit">>, result(1, <<"megabyte">>, 8, <<"megabit">>)},
+        {<<"1">>, <<"gigabyte">>, <<"gigabit">>, result(1, <<"gigabyte">>, 8, <<"gigabit">>)},
+        {<<"1">>, <<"cm">>, <<"mm">>, result(1, <<"cm">>, 10, <<"mm">>)},
+        {<<"1">>, <<"km">>, <<"m">>, result(1, <<"km">>, 1000, <<"m">>)},
         % distance
-        {<<"1">>, <<"mile">>, <<"yard">>, <<"1 mile = 1760 yard">>},
-        {<<"1">>, <<"foot">>, <<"inch">>, <<"1 foot = 12 inch">>},
+        {<<"1">>, <<"mile">>, <<"yard">>, result(1, <<"mile">>, 1760, <<"yard">>)},
+        {<<"1">>, <<"foot">>, <<"inch">>, result(1, <<"foot">>, 12, <<"inch">>)},
         % area
-        {<<"1">>, <<"meter^2">>, <<"foot^2">>, <<"1 meter^2 = 10.76391 foot^2">>},
+        {<<"1">>, <<"meter^2">>, <<"foot^2">>, result(1, <<"meter^2">>, 10.76391, <<"foot^2">>)},
         % volume
-        {<<"1">>, <<"meter^3">>, <<"foot^3">>, <<"1 meter^3 = 35.314667 foot^3">>},
+        {<<"1">>, <<"meter^3">>, <<"foot^3">>, result(1, <<"meter^3">>, 35.314667, <<"foot^3">>)},
         % temperature
-        {<<"1">>, <<"celsius">>, <<"fahrenheit">>, <<"1 celsius = 33.8 fahrenheit">>}
+        {<<"1">>, <<"celsius">>, <<"fahrenheit">>, result(1, <<"celsius">>, 33.8, <<"fahrenheit">>)}
     ],
-    F = fun({UnitNum, UnitFrom, UnitTo, ExpectedShort}, Acc) ->
+    F = fun({UnitNum, UnitFrom, UnitTo, ExpectedAnswer}, Acc) ->
             Question = <<"convert ", UnitNum/binary, UnitFrom/binary, " to ", UnitTo/binary>>,
-            ExpectedAnswer = #{
-                question => Question,
-                short => ExpectedShort,
-                type => text
-            },
             ExpectedAnswer = rinseweb_wiz_convert:answer(Question, [UnitNum, UnitFrom, UnitTo]),
             Acc
         end,
-    ok = lists:foldr(F, ok, TestCases).
+    ok = lists:foldl(F, ok, TestCases).
 
 unit_invalid(_) ->
     TestCases = [
@@ -87,10 +98,11 @@ unit_invalid(_) ->
         {<<"kg">>, <<"mm">>},
         {<<"meters^2">>, <<"^2">>}
     ],
+    ExpectedAnswer = rinseweb_wiz:shrug(convert),
     UnitNum = <<"1">>,
     F = fun({UnitFrom, UnitTo}, Acc) ->
             Question = <<"convert ", UnitNum/binary, UnitFrom/binary, " to ", UnitTo/binary>>,
-            shrug = rinseweb_wiz_convert:answer(Question, [UnitNum, UnitFrom, UnitTo]),
+            ExpectedAnswer = rinseweb_wiz_convert:answer(Question, [UnitNum, UnitFrom, UnitTo]),
             Acc
         end,
-    ok = lists:foldr(F, ok, TestCases).
+    ok = lists:foldl(F, ok, TestCases).

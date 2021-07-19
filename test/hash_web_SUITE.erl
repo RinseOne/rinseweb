@@ -41,6 +41,24 @@ end_per_testcase(_, _Config) ->
     ok.
 
 %% ============================================================================
+%% Helpers
+%% ============================================================================
+
+result(Question, Hash) ->
+    #{
+        <<"question">> => list_to_binary(Question),
+        <<"answers">> => [
+            #{
+                <<"source">> => <<"hash">>,
+                <<"type">> => <<"hash">>,
+                <<"answer">> => #{
+                    <<"hash">> => Hash
+                }
+            }
+        ]
+    }.
+
+%% ============================================================================
 %% Tests
 %% ============================================================================
 
@@ -49,13 +67,7 @@ sha(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = [
-        #{
-            <<"question">> => <<"sha hello">>,
-            <<"short">> => <<"aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d">>,
-            <<"type">> => <<"text">>
-        }
-    ],
+    ExpectedResponse = result(Question, <<"aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d">>),
     ExpectedResponse = Response,
     ok.
 
@@ -64,13 +76,7 @@ sha2(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = [
-        #{
-            <<"question">> => <<"sha2 hello">>,
-            <<"short">> => <<"2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824">>,
-            <<"type">> => <<"text">>
-        }
-    ],
+    ExpectedResponse = result(Question, <<"2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824">>),
     ExpectedResponse = Response,
     ok.
 
@@ -79,13 +85,7 @@ md5(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = [
-        #{
-            <<"question">> => <<"md5 hello">>,
-            <<"short">> => <<"5d41402abc4b2a76b9719d911017c592">>,
-            <<"type">> => <<"text">>
-        }
-    ],
+    ExpectedResponse = result(Question, <<"5d41402abc4b2a76b9719d911017c592">>),
     ExpectedResponse = Response,
     ok.
 
@@ -94,12 +94,6 @@ separator_greedy_match(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = [
-        #{
-            <<"question">> => <<"md5         hello">>,
-            <<"short">> => <<"5d41402abc4b2a76b9719d911017c592">>,
-            <<"type">> => <<"text">>
-        }
-    ],
+    ExpectedResponse = result(Question, <<"5d41402abc4b2a76b9719d911017c592">>),
     ExpectedResponse = Response,
     ok.
