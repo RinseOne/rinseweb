@@ -38,38 +38,39 @@ end_per_testcase(_, _Config) ->
     ok.
 
 %% ============================================================================
+%% Helpers
+%% ============================================================================
+
+result(Hash) ->
+    #{
+        type => text,
+        source => hash,
+        answer => #{
+            hash => Hash
+        }
+    }.
+
+%% ============================================================================
 %% Tests
 %% ============================================================================
 
 sha(_) ->
     Question = <<"sha hello">>,
-    ExpectedAnswer = #{
-        question => Question,
-        type => text,
-        short => <<"aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d">>
-    },
+    ExpectedAnswer = result(<<"aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d">>),
     Answer = rinseweb_wiz_hash:answer(Question, [<<"sha">>, <<"hello">>]),
     ExpectedAnswer = Answer,
     ok.
 
 sha2(_) ->
     Question = <<"sha2 hello">>,
-    ExpectedAnswer = #{
-        question => Question,
-        type => text,
-        short => <<"2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824">>
-    },
+    ExpectedAnswer = result(<<"2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824">>),
     Answer = rinseweb_wiz_hash:answer(Question, [<<"sha2">>, <<"hello">>]),
     ExpectedAnswer = Answer,
     ok.
 
 md5(_) ->
     Question = <<"md5 hello">>,
-    ExpectedAnswer = #{
-        question => Question,
-        type => text,
-        short => <<"5d41402abc4b2a76b9719d911017c592">>
-    },
+    ExpectedAnswer = result(<<"5d41402abc4b2a76b9719d911017c592">>),
     Answer = rinseweb_wiz_hash:answer(Question, [<<"md5">>, <<"hello">>]),
     ExpectedAnswer = Answer,
     ok.
