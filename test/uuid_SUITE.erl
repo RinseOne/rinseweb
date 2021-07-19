@@ -40,6 +40,6 @@ end_per_testcase(_, _Config) ->
 simple(_) ->
     Question = <<"uuid">>,
     Answer = rinseweb_wiz_uuid:answer(Question, []),
-    Question = maps:get(question, Answer),
     text = maps:get(type, Answer),
-    true = uuid:is_v4(uuid:string_to_uuid(maps:get(short, Answer))).
+    uuid = maps:get(source, Answer),
+    true = uuid:is_v4(uuid:string_to_uuid(maps:get(text, maps:get(answer, Answer)))).
