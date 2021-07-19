@@ -48,14 +48,28 @@ end_per_testcase(_, _Config) ->
 %% Helpers
 %% ============================================================================
 
-unregonized_command(Question) when is_list(Question) ->
-    [
-        #{
-            <<"question">> => list_to_binary(Question),
-            <<"short">> => <<"No clue">>,
-            <<"type">> => <<"text">>
-        }
-    ].
+result_no_answers(Question) when is_list(Question) ->
+    #{
+        <<"question">> => list_to_binary(Question),
+        <<"answers">> => []
+    }.
+
+result(Question, UnitFromNum, UnitFrom, UnitToNum, UnitTo) ->
+    #{
+        <<"question">> => list_to_binary(Question),
+        <<"answers">> => [
+            #{
+                <<"source">> => <<"convert">>,
+                <<"type">> => <<"conversion_result">>,
+                <<"answer">> => #{
+                    <<"unit_from_name">> => UnitFrom,
+                    <<"unit_from_number">> => UnitFromNum,
+                    <<"unit_to_name">> => UnitTo,
+                    <<"unit_to_number">> => UnitToNum
+                }
+            }
+        ]
+    }.
 
 %% ============================================================================
 %% Tests
@@ -66,28 +80,17 @@ convert_json(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = [
-        #{
-            <<"question">> => <<"convert 20 km to miles">>,
-            <<"short">> => <<"20 km = 12.427424 miles">>,
-            <<"type">> => <<"text">>
-        }
-    ],
+    ExpectedResponse = result(Question, 20, <<"km">>, 12.427424, <<"miles">>),
     ExpectedResponse = Response,
     ok.
 
 convert_json_extra_whitespace(_) ->
     Question = "   convert 20 km to miles  ",
+    QuestionTrimmed = "convert 20 km to miles",
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = [
-        #{
-            <<"question">> => <<"convert 20 km to miles">>,
-            <<"short">> => <<"20 km = 12.427424 miles">>,
-            <<"type">> => <<"text">>
-        }
-    ],
+    ExpectedResponse = result(QuestionTrimmed, 20, <<"km">>, 12.427424, <<"miles">>),
     ExpectedResponse = Response,
     ok.
 
@@ -96,13 +99,7 @@ convert_json_case_insensitive(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = [
-        #{
-            <<"question">> => <<"ConVerT 20 km to miles">>,
-            <<"short">> => <<"20 km = 12.427424 miles">>,
-            <<"type">> => <<"text">>
-        }
-    ],
+    ExpectedResponse = result(Question, 20, <<"km">>, 12.427424, <<"miles">>),
     ExpectedResponse = Response,
     ok.
 
@@ -111,8 +108,7 @@ convert_unrecognized_syntax(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = unregonized_command(Question),
-    io:format("Expected response: ~p~n", [ExpectedResponse]),
+    ExpectedResponse = result_no_answers(Question),
     ExpectedResponse = Response,
     ok.
 
@@ -121,7 +117,8 @@ convert_unsupported_unit(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    [<<"shrug">>] = Response,
+    ExpectedResponse = result_no_answers(Question),
+    ExpectedResponse = Response,
     ok.
 
 convert_invalid_number(_) ->
@@ -131,10 +128,10 @@ convert_invalid_number(_) ->
     ],
     F = fun(Num, Acc) ->
             Question = "convert " ++ Num ++ " kg to pounds",
-            ExpectedResponse = unregonized_command(Question),
             {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
             Response = rinseweb_test:decode_response_body(ResponseBody),
             true = lists:member({"content-type","application/json"}, Headers),
+            ExpectedResponse = result_no_answers(Question),
             ExpectedResponse = Response,
             Acc
         end,

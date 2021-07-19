@@ -7,30 +7,56 @@
 
 %% API
 -export([answer/1]).
+-export([answer/3]).
+-export([shrug/1]).
 
 %% Types
--type answers() :: [answer()].
--type answer() :: shrug | answer_payload().
--type answer_type() :: text.
--type answer_payload() :: #{
+-type result() :: #{
     question := binary(),
-    type := answer_type(),
-    short := binary()
+    answers := answers()
 }.
 -type question() :: binary().
+-type answers() :: [answer()].
+-type answer() :: #{
+    type := answer_type(),
+    source := answer_source(),
+    answer => answer_custom()
+}.
+-type answer_type() :: shrug | text. % TODO complete
+-type answer_source() :: atom().
+-type answer_custom() :: map().
 
 -export_type([question/0]).
--export_type([answer/0]).
+-export_type([result/0]).
 
 %%====================================================================
 %% API
 %%====================================================================
 
--spec answer(question()) -> answers().
+-spec answer(question()) -> result().
 answer(Question) ->
     TrimmedQuestion = binary_trim(Question),
     {Handler, Args} = find_handler(TrimmedQuestion, rinseweb_manifests:get_all()),
-    [Handler:answer(TrimmedQuestion, Args)].
+    Answers = maybe_add_answer(Handler:answer(TrimmedQuestion, Args), []),
+    #{
+        question => TrimmedQuestion,
+        answers => Answers
+    }.
+
+-spec answer(answer_type(), answer_source(), answer_custom()) -> answer().
+answer(Type, Source, Custom) ->
+    #{
+        type => Type,
+        source => Source,
+        answer => Custom
+    }.
+
+-spec shrug(answer_source()) -> answer().
+shrug(Source) ->
+    #{
+        type => shrug,
+        source => Source
+    }.
 
 %%====================================================================
 %% Internal functions
@@ -62,6 +88,10 @@ find_handler_check_result({match, Handler, Args}, _Question, _Rest) ->
     {Handler, Args};
 find_handler_check_result(nomatch, Question, Rest) ->
     find_handler(Question, Rest).
+
+-spec maybe_add_answer(answer(), answers()) -> answers().
+maybe_add_answer(#{type := shrug}, Answers) -> Answers;
+maybe_add_answer(Answer, Answers) -> [Answer|Answers].
 
 -spec binary_trim(binary()) -> binary().
 binary_trim(Bin) ->
