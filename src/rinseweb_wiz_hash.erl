@@ -9,7 +9,7 @@
 -export([answer/2]).
 
 -define(ANSWER_SOURCE, hash).
--define(ANSWER_TYPE, text).
+-define(ANSWER_TYPE, hash).
 
 %%====================================================================
 %% API

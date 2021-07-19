@@ -50,7 +50,7 @@ result(Question, Hash) ->
         <<"answers">> => [
             #{
                 <<"source">> => <<"hash">>,
-                <<"type">> => <<"text">>,
+                <<"type">> => <<"hash">>,
                 <<"answer">> => #{
                     <<"hash">> => Hash
                 }

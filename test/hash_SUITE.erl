@@ -43,7 +43,7 @@ end_per_testcase(_, _Config) ->
 
 result(Hash) ->
     #{
-        type => text,
+        type => hash,
         source => hash,
         answer => #{
             hash => Hash
