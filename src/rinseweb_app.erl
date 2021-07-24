@@ -22,8 +22,23 @@ start(_StartType, _StartArgs) ->
     {ok, _} = cowboy:start_clear(http, [{port, 8080}], #{
         env => #{dispatch => Dispatch}
     }),
+    ok = init_cache(),
     rinseweb_sup:start_link().
 
 stop(_State) ->
     ok = cowboy:stop_listener(http),
     ok.
+
+%%====================================================================
+%% Internal functions
+%%====================================================================
+
+-spec init_cache() -> ok.
+init_cache() ->
+    Manifests = rinseweb_manifests:get_all(),
+    F = fun(#{handler := Handler, cache := CacheOptions}) ->
+            ok = rinseweb_cache:start(Handler, CacheOptions);
+        (_) ->
+            ok
+    end,
+    ok = lists:foreach(F, Manifests).

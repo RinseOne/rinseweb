@@ -26,6 +26,7 @@
 -type answer_type() :: shrug | text | conversion_result | hash.
 -type answer_source() :: atom().
 -type answer_custom() :: map().
+-type args() :: [any()].
 
 -export_type([question/0]).
 -export_type([result/0]).
@@ -37,8 +38,9 @@
 -spec answer(question()) -> result().
 answer(Question) ->
     TrimmedQuestion = binary_trim(Question),
-    {Handler, Args} = find_handler(TrimmedQuestion, rinseweb_manifests:get_all()),
-    Answers = maybe_add_answer(Handler:answer(TrimmedQuestion, Args), []),
+    {Manifest, Args} = find_handler(TrimmedQuestion, rinseweb_manifests:get_all()),
+    Answer = handler_answer(Manifest, TrimmedQuestion, Args),
+    Answers = maybe_add_answer(Answer, []),
     #{
         question => TrimmedQuestion,
         answers => Answers
@@ -70,21 +72,21 @@ shrug(Source) ->
 %% Internal functions
 %%====================================================================
 
--spec find_handler(question(), [rinseweb_manifests:manifest()]) -> {atom(), [any()]} | nomatch.
+-spec find_handler(question(), [rinseweb_manifests:manifest()]) -> {rinseweb_manifests:manifest(), args()} | nomatch.
 find_handler(_Question, []) -> nomatch;
-find_handler(Question, [#{matches := Matches, handler := Handler}|Rest]) ->
-    Result = compare_manifest_matches(Question, Matches, Handler),
+find_handler(Question, [#{matches := Matches} = Manifest|Rest]) ->
+    Result = compare_manifest_matches(Question, Matches, Manifest),
     find_handler_check_result(Result, Question, Rest).
 
--type compare_result() :: {match, atom(), [any()]} | nomatch.
--spec compare_manifest_matches(question(), [rinseweb_manifests:match()], atom()) -> compare_result().
-compare_manifest_matches(_Question, [], _Handler) -> nomatch;
-compare_manifest_matches(Question, [#{type := regex, value := Regex}|Rest], Handler) ->
+-type compare_result() :: {match, rinseweb_manifests:manifest(), args()} | nomatch.
+-spec compare_manifest_matches(question(), [rinseweb_manifests:match()], rinseweb_manifests:manifest()) -> compare_result().
+compare_manifest_matches(_Question, [], _Manifest) -> nomatch;
+compare_manifest_matches(Question, [#{type := regex, value := Regex}|Rest], Manifest) ->
     case re:run(Question, Regex) of
         {match, [_First|RestRegexMatches]} ->
             CapturedArgs = regex_matches_to_bin(RestRegexMatches, Question, []),
-            {match, Handler, CapturedArgs};
-        nomatch -> compare_manifest_matches(Question, Rest, Handler)
+            {match, Manifest, CapturedArgs};
+        nomatch -> compare_manifest_matches(Question, Rest, Manifest)
     end.
 
 -spec regex_matches_to_bin([{non_neg_integer(), non_neg_integer()}], binary(), [binary()]) -> [binary()].
@@ -92,10 +94,24 @@ regex_matches_to_bin([], _Bin, Acc) -> lists:reverse(Acc);
 regex_matches_to_bin([{Pos, Len}|Rest], Bin, Acc) ->
     regex_matches_to_bin(Rest, Bin, [binary:part(Bin, Pos, Len)|Acc]).
 
-find_handler_check_result({match, Handler, Args}, _Question, _Rest) ->
-    {Handler, Args};
+-spec find_handler_check_result(compare_result(), question(), args()) -> {rinseweb_manifests:manifest(), args()}.
+find_handler_check_result({match, Manifest, Args}, _Question, _Rest) ->
+    {Manifest, Args};
 find_handler_check_result(nomatch, Question, Rest) ->
     find_handler(Question, Rest).
+
+-spec handler_answer(rinseweb_manifests:manifest(), question(), args()) -> answer().
+handler_answer(#{handler := Handler, cache := _CacheOptions}, Question, Args) ->
+    case rinseweb_cache:get(Handler, Question) of
+        undefined ->
+            Answer = Handler:answer(Question, Args),
+            ok = rinseweb_cache:put(Handler, Question, Answer),
+            Answer;
+        Answer ->
+            Answer
+    end;
+handler_answer(#{handler := Handler}, Question, Args) ->
+    Handler:answer(Question, Args).
 
 -spec maybe_add_answer(answer(), answers()) -> answers().
 maybe_add_answer(#{type := shrug}, Answers) -> Answers;

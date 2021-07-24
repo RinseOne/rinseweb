@@ -16,6 +16,7 @@
 -export([convert_unrecognized_syntax/1]).
 -export([convert_unsupported_unit/1]).
 -export([convert_invalid_number/1]).
+-export([convert_use_cache/1]).
 
 %% ============================================================================
 %% ct functions
@@ -28,7 +29,8 @@ all() ->
         convert_json_case_insensitive,
         convert_unrecognized_syntax,
         convert_unsupported_unit,
-        convert_invalid_number
+        convert_invalid_number,
+        convert_use_cache
     ].
 
 init_per_suite(Config) ->
@@ -49,9 +51,12 @@ end_per_testcase(_, _Config) ->
 %% ============================================================================
 
 result_no_answers(Question) when is_list(Question) ->
+    result_custom_answers(Question, []).
+
+result_custom_answers(Question, Answers) ->
     #{
         <<"question">> => list_to_binary(Question),
-        <<"answers">> => []
+        <<"answers">> => Answers
     }.
 
 result(Question, UnitFromNum, UnitFrom, UnitToNum, UnitTo) ->
@@ -136,3 +141,21 @@ convert_invalid_number(_) ->
             Acc
         end,
     ok = lists:foldr(F, ok, TestCases).
+
+convert_use_cache(_) ->
+    Question = "convert 20 km to m",
+    QuestionBin = list_to_binary(Question),
+    undefined = rinseweb_cache:get(rinseweb_wiz_convert, QuestionBin),
+    {ok, {{"HTTP/1.1", 200, "OK"}, Headers1, ResponseBody1}} = rinseweb_test:request_json(Question),
+    % overwrite cache to make sure we are reading from it the 2nd time
+    ok = rinseweb_cache:put(rinseweb_wiz_convert, QuestionBin, #{foo => bar}),
+    {ok, {{"HTTP/1.1", 200, "OK"}, Headers2, ResponseBody2}} = rinseweb_test:request_json(Question),
+    Response1 = rinseweb_test:decode_response_body(ResponseBody1),
+    Response2 = rinseweb_test:decode_response_body(ResponseBody2),
+    true = lists:member({"content-type","application/json"}, Headers1),
+    true = lists:member({"content-type","application/json"}, Headers2),
+    ExpectedResponse1 = result(Question, 20, <<"km">>, 20000, <<"m">>),
+    ExpectedResponse2 = result_custom_answers(Question, [#{<<"foo">> => <<"bar">>}]),
+    ExpectedResponse1 = Response1,
+    ExpectedResponse2 = Response2,
+    ok.

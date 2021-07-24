@@ -35,5 +35,3 @@ init([]) ->
                  period => 1},
     ChildSpecs = [],
     {ok, {SupFlags, ChildSpecs}}.
-
-%% internal functions
