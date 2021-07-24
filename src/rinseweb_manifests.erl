@@ -16,6 +16,7 @@
 }.
 -type manifest() :: #{
     matches := [match()],
+    cache => rinseweb_cache:options(),
     handler := atom()
 }.
 
@@ -36,6 +37,11 @@ get_all() ->
                     value => <<"^(?i:convert)\\s+([-]?[0-9]*[.]?[0-9]+)\\s*([a-zA-Z]+[\\^]?[2-3]?)\\s+to\\s+([a-zA-Z]+[\\^]?[2-3]?)$">>
                 }
             ],
+            cache => #{
+                n => 10,          % 10 segments
+                ttl => 86400,     % 1 day
+                memory => 1048576 % 1 MB limit (rough)
+            },
             handler => rinseweb_wiz_convert
         },
         #{ % unix timestamp
