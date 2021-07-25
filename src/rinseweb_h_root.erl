@@ -39,7 +39,10 @@ hello_to_html(Req, State) ->
     <style type=\"text/css\">
         h2 {font-size:5em;font-family:monospace;}
         input[type=\"text\"] {font-size:3em;}
-        #answer {font-size:3em;font-family:sans-serif;}
+        div#answer {font-size:3em;font-family:sans-serif;}
+        div#answer > ul {margin:0;padding:0;list-style-type:none;font-size:0.5em;width:80%;}
+        div#answer > ul > li {white-space:nowrap;overflow:hidden;text-overflow:clip;margin:10px;}
+        div#answer > ul > li > span {margin-left:20px}
         footer {position:fixed;bottom:0;text-align:center;width:100%;font-size:1em;font-family:sans-serif;}
     </style>
 </head>

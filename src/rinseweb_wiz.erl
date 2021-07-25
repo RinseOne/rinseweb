@@ -23,9 +23,9 @@
     source := answer_source(),
     answer => answer_custom()
 }.
--type answer_type() :: shrug | text | conversion_result | hash.
+-type answer_type() :: shrug | text | conversion_result | hash | wiki.
 -type answer_source() :: atom().
--type answer_custom() :: map().
+-type answer_custom() :: any().
 -type args() :: [any()].
 
 -export_type([question/0]).

@@ -44,6 +44,20 @@ get_all() ->
             },
             handler => rinseweb_wiz_convert
         },
+        #{ % wikipedia
+            matches => [
+                #{
+                    type => regex,
+                    value => <<"^(?i:wiki)\s+(.*)$">>
+                }
+            ],
+            cache => #{
+                n => 10,           % 10 segments
+                ttl => 86400,      % 1 day
+                memory => 10485760 % 10 MB
+            },
+            handler => rinseweb_wiz_wiki
+        },
         #{ % unix timestamp
             matches => [
                 #{
