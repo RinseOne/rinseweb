@@ -71,9 +71,9 @@ unit_coverage(_) ->
         {<<"1">>, <<"kilobyte">>, <<"kilobit">>, result(1, <<"kilobyte">>, 8, <<"kilobit">>)},
         {<<"1">>, <<"megabyte">>, <<"megabit">>, result(1, <<"megabyte">>, 8, <<"megabit">>)},
         {<<"1">>, <<"gigabyte">>, <<"gigabit">>, result(1, <<"gigabyte">>, 8, <<"gigabit">>)},
+        % distance
         {<<"1">>, <<"cm">>, <<"mm">>, result(1, <<"cm">>, 10, <<"mm">>)},
         {<<"1">>, <<"km">>, <<"m">>, result(1, <<"km">>, 1000, <<"m">>)},
-        % distance
         {<<"1">>, <<"mile">>, <<"yard">>, result(1, <<"mile">>, 1760, <<"yard">>)},
         {<<"1">>, <<"foot">>, <<"inch">>, result(1, <<"foot">>, 12, <<"inch">>)},
         % area
