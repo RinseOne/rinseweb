@@ -24,31 +24,48 @@ function render_answer(json) {
     answerElem = document.getElementById('answer');
     removeAllChildren(answerElem);
     if (json.answers.length == 0) {
-        answerTextNode = document.createTextNode("¯\\_(ツ)_/¯")
+        answerNode = document.createTextNode("¯\\_(ツ)_/¯")
     } else {
-        answerText = answerToText(json.answers[0]);
-        answerTextNode = document.createTextNode(answerText);
+        answerNode = answerToNode(json.answers[0]);
     }
-    answerElem.appendChild(answerTextNode);
+    answerElem.appendChild(answerNode);
 }
 
-function answerToText(answer) {
-    txt = ""
+function answerToNode(answer) {
+    var node;
     switch(answer.type) {
         case "text":
-            txt = answer.answer.text;
+            node = document.createTextNode(answer.answer.text);
             break;
         case "hash":
-            txt = answer.answer.hash;
+            node = document.createTextNode(answer.answer.hash);
             break;
         case "conversion_result":
-            a = answer.answer;
-            txt = a.unit_from_number + " " + a.unit_from_name + " = " + a.unit_to_number + " " + a.unit_to_name
+            const a = answer.answer;
+            var txt = a.unit_from_number + " " + a.unit_from_name + " = " + a.unit_to_number + " " + a.unit_to_name
+            node = document.createTextNode(txt);
+            break;
+        case "wiki":
+            node = document.createElement('ul');
+            results = answer.answer;
+            for (let i = 0; i < results.length; i++) {
+                var itemNode = document.createElement('li');
+                var linkNode = document.createElement('a');
+                var linkAttr = document.createAttribute('href');
+                linkAttr.value = results[i].url;
+                linkNode.setAttributeNode(linkAttr);
+                linkNode.appendChild(document.createTextNode(results[i].title));
+                var descNode = document.createElement('span');
+                descNode.innerHTML = results[i].snippet;
+                itemNode.appendChild(linkNode);
+                itemNode.appendChild(descNode);
+                node.appendChild(itemNode);
+            }
             break;
         default:
-            txt = "";
+            node = document.createTextNode("");
     };
-    return txt;
+    return node;
 }
 
 function removeAllChildren(node) {
