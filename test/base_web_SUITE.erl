@@ -1,4 +1,4 @@
--module(base_SUITE).
+-module(base_web_SUITE).
 
 -include_lib("common_test/include/ct.hrl").
 
