@@ -16,6 +16,8 @@
 }.
 
 -define(URL, "https://en.wikipedia.org/w/api.php?action=query&format=json&generator=search&gsrprop=snippet&prop=info&inprop=url&gsrsearch=").
+-define(SOURCE, wiki).
+-define(TYPE, wiki).
 
 %%====================================================================
 %% API
@@ -29,25 +31,21 @@ answer(_Question, [Query]) ->
 %% Internal functions
 %%====================================================================
 
--spec url_encode(string()) -> string().
-url_encode(Str) ->
-    edoc_lib:escape_uri(Str).
-
 -spec search(string()) -> rinseweb_wiz:answer().
 search(Query) ->
-    QueryEncoded = url_encode(Query),
+    QueryEncoded = rinseweb_util:url_encode(Query),
     Url = ?URL ++ QueryEncoded,
     Req = {Url, []},
     Response = httpc:request(get, Req, [], [{body_format, binary}]),
     parse_response(Response).
 
 -spec parse_response({ok, {httpc:status_line(), httpc:headers(), binary()}} | {error, term()}) -> rinseweb_wiz:answer().
-parse_response({error, _Reason}) -> rinseweb_wiz:shrug(wiki);
+parse_response({error, _Reason}) -> rinseweb_wiz:shrug(?SOURCE);
 parse_response({ok, {{_Version, 200, _ReasonPhrase}, _Headers, Body}}) ->
     BodyDecoded = jsx:decode(Body, [{return_maps, true}]),
-    rinseweb_wiz:answer(wiki, wiki, parse_body(BodyDecoded));
+    rinseweb_wiz:answer(?TYPE, ?SOURCE, parse_body(BodyDecoded));
 parse_response({ok, {{_Version, _Status, _ReasonPhrase}, _Headers, _Body}}) ->
-    rinseweb_wiz:shrug(wiki).
+    rinseweb_wiz:shrug(?SOURCE).
 
 -spec parse_body(map()) -> [item()].
 parse_body(#{<<"query">> := #{<<"pages">> := PagesMap}}) ->
