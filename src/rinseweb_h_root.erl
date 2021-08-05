@@ -36,26 +36,20 @@ hello_to_html(Req, State) ->
 	<meta http-equiv=\"Content-Security-Policy\" content=\"script-src 'nonce-",Nonce/binary,"'\">
 	<title>rinse</title>
     <script type=\"text/javascript\" src=\"/assets/app.js\" nonce=\"",Nonce/binary,"\"></script>
-    <style type=\"text/css\">
-        h2 {font-size:5em;font-family:monospace;}
-        input[type=\"text\"] {font-size:3em;}
-        div#answer {font-size:3em;font-family:sans-serif;}
-        div#answer > ul {margin:0;padding:0;list-style-type:none;font-size:0.5em;width:80%;}
-        div#answer > ul > li {white-space:nowrap;overflow:hidden;text-overflow:clip;margin:10px;}
-        div#answer > ul > li > span {margin-left:20px}
-        footer {position:fixed;bottom:0;text-align:center;width:100%;font-size:1em;font-family:sans-serif;}
-    </style>
+    <link rel=\"stylesheet\" type=\"text/css\" href=\"assets/root.css\" />
 </head>
 <body>
-    <center>
-        <h2><span style=\"color:#0f2557\">r</span><span style=\"color:#28559a\">i</span><span style=\"color:#3778c2\">n</span><span style=\"color:#4b9fe1\">s</span><span style=\"color:#63bce5\">e</span></h2>
+    <div>
+        <h2 style=\"text-align:center;\"><span style=\"color:#0f2557\">r</span><span style=\"color:#28559a\">i</span><span style=\"color:#3778c2\">n</span><span style=\"color:#4b9fe1\">s</span><span style=\"color:#63bce5\">e</span></h2>
         <form id=\"search\">
             <input id=\"question\" type=\"text\" autocapitalize=\"none\" size=\"30\" style=\"text-align:center\" />
         </form>
         <br/><br/>
-        <div id=\"answer\">
+        <div id=\"results\">
+            <div id=\"answer\">
+            </div>
         </div>
-    </center>
+    </div>
 <footer>
     <p><a href=\"/about\">About</a> - <a href=\"/commands\">Commands</a></p>
 </footer>
