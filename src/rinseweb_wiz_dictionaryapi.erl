@@ -78,7 +78,7 @@ parse_item(#{<<"word">> := Word, <<"phonetics">> := PhoneticsRaw, <<"meanings">>
         (#{<<"text">> := Text}, Acc) ->
             [#{text => Text}|Acc]
     end,
-    Phonetics = lists:foldl(FPhonetics, [], PhoneticsRaw),
+    Phonetics = lists:foldr(FPhonetics, [], PhoneticsRaw),
     FMeanings = fun(#{<<"partOfSpeech">> := PartOfSpeech, <<"definitions">> := DefinitionsRaw}, Acc) ->
             FDefinitions = fun(#{<<"definition">> := Definition, <<"example">> := Example}, AccDefs) ->
                     Elem = #{definition => Definition, example => Example},
@@ -87,10 +87,10 @@ parse_item(#{<<"word">> := Word, <<"phonetics">> := PhoneticsRaw, <<"meanings">>
                     Elem = #{definition => Definition},
                     [Elem|AccDefs]
             end,
-            Definitions = lists:foldl(FDefinitions, [], DefinitionsRaw),
+            Definitions = lists:foldr(FDefinitions, [], DefinitionsRaw),
             Elem = #{part_of_speech => PartOfSpeech, definitions => Definitions},
             [Elem|Acc]
     end,
-    Meanings = lists:foldl(FMeanings, [], MeaningsRaw),
+    Meanings = lists:foldr(FMeanings, [], MeaningsRaw),
     #{word => Word, phonetics => Phonetics, meanings => Meanings};
 parse_item(_Item) -> [].
