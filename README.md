@@ -24,9 +24,16 @@ Run tests
 make tests
 ```
 
-## Convenience
+## Release
 
 Update version to prepare for release; for example, to set version `1.2.3`:
 ```
 make set-version version=1.2.3
+```
+and then commit and push the change.
+
+Use `git tag` to tag and push a release. This will trigger to create a new release automatically via GitHub workflows. For example:
+```
+git tag 1.2.3
+git push origin 1.2.3
 ```
