@@ -24,7 +24,9 @@ function render_answer(json) {
     answerElem = document.getElementById('answer');
     removeAllChildren(answerElem);
     if (json.answers.length == 0) {
-        answerNode = document.createTextNode("¯\\_(ツ)_/¯")
+        answerNode = document.createElement('div');
+        answerNode.setAttribute('class', 'simple');
+        answerNode.appendChild(document.createTextNode("¯\\_(ツ)_/¯"));
     } else {
         answerNode = answerToNode(json.answers[0]);
     }
