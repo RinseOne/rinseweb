@@ -1,6 +1,6 @@
 {application, rinseweb,
  [{description, "rinse is not a search engine"},
-  {vsn, "0.8.2"},
+  {vsn, "0.8.3"},
   {registered, []},
   {mod, {rinseweb_app, []}},
   {applications,
