@@ -72,6 +72,15 @@ get_all() ->
             },
             handler => rinseweb_wiz_dictionaryapi
         },
+        #{ % time in timezone
+            matches => [
+                #{
+                    type => regex,
+                    value => <<"^(?i:time in)\s+([a-zA-Z_/]+)$">>
+                }
+            ],
+            handler => rinseweb_wiz_datezone
+        },
         #{ % unix timestamp
             matches => [
                 #{
