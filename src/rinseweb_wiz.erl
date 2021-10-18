@@ -28,6 +28,7 @@
 -type answer_custom() :: any().
 -type args() :: [any()].
 
+-export_type([answer_source/0]).
 -export_type([question/0]).
 -export_type([result/0]).
 

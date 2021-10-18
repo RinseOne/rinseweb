@@ -1,4 +1,4 @@
--module(wiki_web_SUITE).
+-module(wikipedia_SUITE).
 
 -include_lib("common_test/include/ct.hrl").
 
@@ -22,11 +22,10 @@ all() ->
     ].
 
 init_per_suite(Config) ->
-    {ok, _} = application:ensure_all_started(rinseweb),
     Config.
 
 end_per_suite(_) ->
-    ok = application:stop(rinseweb).
+    ok.
 
 init_per_testcase(_, Config) ->
     Config.
@@ -39,19 +38,14 @@ end_per_testcase(_, _Config) ->
 %% ============================================================================
 
 search(_) ->
-    Question = "wiki hello",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ResponseMap = rinseweb_test:decode_response_body(ResponseBody),
-    ExpectedQuestion = list_to_binary(Question),
-    ExpectedQuestion = maps:get(<<"question">>, ResponseMap),
-    [Answer|_] = maps:get(<<"answers">>, ResponseMap),
-    <<"wiki">> = maps:get(<<"type">>, Answer),
-    AnswerCustom = maps:get(<<"answer">>, Answer),
+    Question = <<"wiki hello">>,
+    Answer = rinseweb_wiz_wikipedia:answer(Question, [<<"hello">>]),
+    wiki = maps:get(type, Answer),
+    wiki = maps:get(source, Answer),
+    AnswerCustom = maps:get(answer, Answer),
     true = is_list(AnswerCustom),
     true = length(AnswerCustom) > 0,
     [FirstItem|_] = AnswerCustom,
-    true = maps:is_key(<<"title">>, FirstItem),
-    true = maps:is_key(<<"snippet">>, FirstItem),
-    true = maps:is_key(<<"url">>, FirstItem),
-    ok.
+    true = maps:is_key(title, FirstItem),
+    true = maps:is_key(snippet, FirstItem),
+    true = maps:is_key(url, FirstItem).
