@@ -58,6 +58,28 @@ get_all() ->
             },
             handler => rinseweb_wiz_wiki
         },
+        #{ % wikihow
+            matches => [
+                #{
+                    type => regex,
+                    value => <<"^(?i:wikihow)\s+(.*)$">>
+                },
+                #{
+                    type => regex,
+                    value => <<"^(?i:how\s*to)\s+(.*)$">>
+                },
+                #{
+                    type => regex,
+                    value => <<"^(?i:how\s*do\s*i)\s+(.*)$">>
+                }
+            ],
+            cache => #{
+                n => 10,           % 10 segments
+                ttl => 86400,      % 1 day
+                memory => 10485760 % 10 MB
+            },
+            handler => rinseweb_wiz_wikihow
+        },
         #{ % definition
             matches => [
                 #{
