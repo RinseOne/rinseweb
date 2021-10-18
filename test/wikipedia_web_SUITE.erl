@@ -1,4 +1,4 @@
--module(wiki_web_SUITE).
+-module(wikipedia_web_SUITE).
 
 -include_lib("common_test/include/ct.hrl").
 

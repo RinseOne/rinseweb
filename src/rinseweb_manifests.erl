@@ -56,7 +56,7 @@ get_all() ->
                 ttl => 86400,      % 1 day
                 memory => 10485760 % 10 MB
             },
-            handler => rinseweb_wiz_wiki
+            handler => rinseweb_wiz_wikipedia
         },
         #{ % wikihow
             matches => [

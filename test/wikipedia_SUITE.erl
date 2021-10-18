@@ -1,4 +1,4 @@
--module(wiki_SUITE).
+-module(wikipedia_SUITE).
 
 -include_lib("common_test/include/ct.hrl").
 
@@ -39,7 +39,7 @@ end_per_testcase(_, _Config) ->
 
 search(_) ->
     Question = <<"wiki hello">>,
-    Answer = rinseweb_wiz_wiki:answer(Question, [<<"hello">>]),
+    Answer = rinseweb_wiz_wikipedia:answer(Question, [<<"hello">>]),
     wiki = maps:get(type, Answer),
     wiki = maps:get(source, Answer),
     AnswerCustom = maps:get(answer, Answer),

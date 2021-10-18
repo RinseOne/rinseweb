@@ -1,9 +1,9 @@
 %%%-------------------------------------------------------------------
-%% @doc rinseweb wiki wizard
+%% @doc rinseweb Wikipedia wizard
 %% @end
 %%%-------------------------------------------------------------------
 
--module(rinseweb_wiz_wiki).
+-module(rinseweb_wiz_wikipedia).
 
 %% API
 -export([answer/2]).
