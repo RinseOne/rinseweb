@@ -7,7 +7,7 @@ function init() {
 
 function answer(_event) {
     question = document.getElementById('question').value;
-    questionEncoded = encodeURI(question);
+    questionEncoded = encodeURIComponent(question);
     fetchOptions = {
         method: 'GET',
         mode: 'no-cors',
