@@ -25,4 +25,5 @@ answer(_Question, [Query]) ->
 
 -spec search(string()) -> rinseweb_wiz:answer().
 search(Query) ->
-    rinseweb_be_wiki:search(?SOURCE, ?URL, Query).
+    Items = rinseweb_be_wiki:search(?URL, Query),
+    rinseweb_be_wiki:items_to_answer(?SOURCE, Items).
