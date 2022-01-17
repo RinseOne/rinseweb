@@ -80,6 +80,20 @@ get_all() ->
             },
             handler => rinseweb_wiz_wikihow
         },
+        #{ % stackexchange
+            matches => [
+                #{
+                    type => regex,
+                    value => <<"^(so|stackoverflow)\s+(.*)$">>
+                }
+            ],
+            cache => #{
+                n => 10,           % 10 segments
+                ttl => 3600,       % 1 hour
+                memory => 10485760 % 10 MB
+            },
+            handler => rinseweb_wiz_stackexchange
+        },
         #{ % definition
             matches => [
                 #{
