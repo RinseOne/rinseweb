@@ -64,7 +64,7 @@ parse_response({ok, {{_Version, _Status, _ReasonPhrase}, _Headers, _Body}}) ->
 
 -spec parse_body(list()) -> [item()].
 parse_body(ListOfItems) ->
-    parse_body(ListOfItems, []).
+    lists:reverse(parse_body(ListOfItems, [])).
 
 -spec parse_body(list(), [item()]) -> [item()].
 parse_body([], Acc) -> Acc;
@@ -73,11 +73,13 @@ parse_body([Item|Rest], Acc) ->
 
 -spec parse_item(map()) -> item().
 parse_item(#{<<"word">> := Word, <<"phonetics">> := PhoneticsRaw, <<"meanings">> := MeaningsRaw}) ->
-    FPhonetics = fun(#{<<"text">> := Text, <<"audio">> := Audio}, Acc) ->
-            [#{text => Text, audio => Audio}|Acc];
-        (#{<<"text">> := Text}, Acc) ->
-            [#{text => Text}|Acc]
-    end,
+    FPhonetics =
+        fun(#{<<"text">> := Text, <<"audio">> := Audio}, Acc) ->
+                [#{text => Text, audio => Audio}|Acc];
+            (#{<<"text">> := Text}, Acc) ->
+                [#{text => Text}|Acc];
+        (_, Acc) -> Acc
+        end,
     Phonetics = lists:foldr(FPhonetics, [], PhoneticsRaw),
     FMeanings = fun(#{<<"partOfSpeech">> := PartOfSpeech, <<"definitions">> := DefinitionsRaw}, Acc) ->
             FDefinitions = fun(#{<<"definition">> := Definition, <<"example">> := Example}, AccDefs) ->
