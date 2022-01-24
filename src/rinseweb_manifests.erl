@@ -129,7 +129,7 @@ get_all() ->
             matches => [
                 #{
                     type => regex,
-                    value => <<"^(ddg)\s+(.*)$">>
+                    value => <<"^(ddg|ddgi|ddgv|ddgn|ddgm)\s+(.*)$">>
                 }
             ],
             handler => rinseweb_wiz_redirect

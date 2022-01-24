@@ -11,6 +11,7 @@
 
 %% Tests
 -export([ddg/1]).
+-export([ddgn/1]).
 
 %% ============================================================================
 %% ct functions
@@ -18,7 +19,11 @@
 
 all() ->
     [
-        ddg
+        ddg,
+        ddgi,
+        ddgv,
+        ddgn,
+        ddgm
     ].
 
 init_per_suite(Config) ->
@@ -56,6 +61,42 @@ ddg(_) ->
     Query = <<"hello">>,
     Question = <<Command/binary, " ", Query/binary>>,
     ExpectedAnswer = result(Query, <<"https://duckduckgo.com/?t=rinseone&q=", Query/binary>>),
+    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query]),
+    ExpectedAnswer = Answer,
+    ok.
+
+ddgi(_) ->
+    Command = <<"ddg">>,
+    Query = <<"hello">>,
+    Question = <<Command/binary, " ", Query/binary>>,
+    ExpectedAnswer = result(Query, <<"https://duckduckgo.com/?t=rinseone&iax=images&ia=images&q=", Query/binary>>),
+    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query]),
+    ExpectedAnswer = Answer,
+    ok.
+
+ddgv(_) ->
+    Command = <<"ddg">>,
+    Query = <<"hello">>,
+    Question = <<Command/binary, " ", Query/binary>>,
+    ExpectedAnswer = result(Query, <<"https://duckduckgo.com/?t=rinseone&iax=videos&ia=videos&q=", Query/binary>>),
+    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query]),
+    ExpectedAnswer = Answer,
+    ok.
+
+ddgn(_) ->
+    Command = <<"ddgn">>,
+    Query = <<"hello">>,
+    Question = <<Command/binary, " ", Query/binary>>,
+    ExpectedAnswer = result(Query, <<"https://duckduckgo.com/?t=rinseone&iar=news&ia=news&q=", Query/binary>>),
+    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query]),
+    ExpectedAnswer = Answer,
+    ok.
+
+ddgm(_) ->
+    Command = <<"ddg">>,
+    Query = <<"hello">>,
+    Question = <<Command/binary, " ", Query/binary>>,
+    ExpectedAnswer = result(Query, <<"https://duckduckgo.com/?t=rinseone&ia=news&iaxm=places&q=", Query/binary>>),
     Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query]),
     ExpectedAnswer = Answer,
     ok.
