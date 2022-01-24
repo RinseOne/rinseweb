@@ -125,6 +125,15 @@ get_all() ->
             ],
             handler => rinseweb_wiz_uuid
         },
+        #{ % redirects
+            matches => [
+                #{
+                    type => regex,
+                    value => <<"^(ddg)\s+(.*)$">>
+                }
+            ],
+            handler => rinseweb_wiz_redirect
+        },
         #{ % fallthrough default
             matches => [
                 #{
