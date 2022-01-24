@@ -115,6 +115,17 @@ function answerToNode(answer) {
                 node.appendChild(wordNode);
             });
             break;
+        case "redirect":
+            node = document.createElement('div');
+            node.setAttribute('class', 'simple')
+            var url = answer.answer.url;
+            var query  = answer.answer.query;
+            var linkNode = document.createElement('a');
+            linkNode.setAttribute('href', url);
+            linkNode.appendChild(document.createTextNode('Search DuckDuckGo for ' + query))
+            node.appendChild(linkNode);
+            window.open(url, '_blank');
+            break;
         default:
             node = document.createTextNode("");
     };

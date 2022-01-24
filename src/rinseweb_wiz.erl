@@ -23,7 +23,7 @@
     source := answer_source(),
     answer => answer_custom()
 }.
--type answer_type() :: conversion_result | definition | hash | shrug | text | wiki.
+-type answer_type() :: conversion_result | definition | hash | redirect | shrug | text | wiki.
 -type answer_source() :: atom().
 -type answer_custom() :: any().
 -type args() :: [any()].
