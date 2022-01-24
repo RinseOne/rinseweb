@@ -38,7 +38,7 @@ end_per_testcase(_, _Config) ->
 %% Helpers
 %% ============================================================================
 
-result(Question, Url, Query) ->
+result(Question, Query, Source, Url) ->
     #{
         <<"question">> => list_to_binary(Question),
         <<"answers">> => [
@@ -47,6 +47,7 @@ result(Question, Url, Query) ->
                 <<"type">> => <<"redirect">>,
                 <<"answer">> => #{
                     <<"url">> => Url,
+                    <<"source">> => Source,
                     <<"query">> => Query
                 }
             }
@@ -62,7 +63,7 @@ ddg(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = result(Question, <<"https://duckduckgo.com/?t=rinseone&q=hello">>, <<"hello">>),
+    ExpectedResponse = result(Question, <<"hello">>, <<"DuckDuckGo">>, <<"https://duckduckgo.com/?t=rinseone&q=hello">>),
     ExpectedResponse = Response,
     ok.
 
@@ -71,6 +72,6 @@ ddg_encode_query(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = result(Question, <<"https://duckduckgo.com/?t=rinseone&q=hello%20%26%20goodbye">>, <<"hello & goodbye">>),
+    ExpectedResponse = result(Question, <<"hello & goodbye">>, <<"DuckDuckGo">>, <<"https://duckduckgo.com/?t=rinseone&q=hello%20%26%20goodbye">>),
     ExpectedResponse = Response,
     ok.

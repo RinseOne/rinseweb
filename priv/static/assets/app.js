@@ -119,10 +119,11 @@ function answerToNode(answer) {
             node = document.createElement('div');
             node.setAttribute('class', 'simple')
             var url = answer.answer.url;
+            var source = answer.answer.source;
             var query  = answer.answer.query;
             var linkNode = document.createElement('a');
             linkNode.setAttribute('href', url);
-            linkNode.appendChild(document.createTextNode('Search DuckDuckGo for ' + query))
+            linkNode.appendChild(document.createTextNode('Search ' + source + ' for ' + query));
             node.appendChild(linkNode);
             window.open(url, '_blank');
             break;
