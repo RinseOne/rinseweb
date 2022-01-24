@@ -11,7 +11,10 @@
 
 %% Tests
 -export([ddg/1]).
+-export([ddgi/1]).
+-export([ddgv/1]).
 -export([ddgn/1]).
+-export([ddgm/1]).
 
 %% ============================================================================
 %% ct functions
