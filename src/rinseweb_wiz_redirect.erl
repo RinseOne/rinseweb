@@ -11,6 +11,7 @@
 %% Types
 -type answer() :: #{
     url => binary(),
+    source => binary(),
     query => binary()
 }.
 
@@ -29,24 +30,25 @@
 -spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_wiz:answer().
 answer(_Question, [Command, Query]) ->
     QueryEncoded = rinseweb_util:url_encode(Query),
-    BaseUrl = command_to_base_url(Command),
+    {BaseUrl, Source} = command_to_url_and_source(Command),
     Url = <<BaseUrl/binary, QueryEncoded/binary>>,
-    rinseweb_wiz:answer(?ANSWER_TYPE, ?ANSWER_SOURCE, create_answer(Url, Query)).
+    rinseweb_wiz:answer(?ANSWER_TYPE, ?ANSWER_SOURCE, create_answer(Url, Source, Query)).
 
 %%====================================================================
 %% Internal functions
 %%====================================================================
 
--spec command_to_base_url(binary()) -> binary().
-command_to_base_url(<<"ddg">>) -> ?URL_DDG_WEB;
-command_to_base_url(<<"ddgi">>) -> ?URL_DDG_IMG;
-command_to_base_url(<<"ddgv">>) -> ?URL_DDG_VID;
-command_to_base_url(<<"ddgn">>) -> ?URL_DDG_NEW;
-command_to_base_url(<<"ddgm">>) -> ?URL_DDG_MAP.
+-spec command_to_url_and_source(binary()) -> {binary(), binary()}.
+command_to_url_and_source(<<"ddg">>) -> {?URL_DDG_WEB, <<"DuckDuckGo">>};
+command_to_url_and_source(<<"ddgi">>) -> {?URL_DDG_IMG, <<"DuckDuckGo images">>};
+command_to_url_and_source(<<"ddgv">>) -> {?URL_DDG_VID, <<"DuckDuckGo videos">>};
+command_to_url_and_source(<<"ddgn">>) -> {?URL_DDG_NEW, <<"DuckDuckGo news">>};
+command_to_url_and_source(<<"ddgm">>) -> {?URL_DDG_MAP, <<"DuckDuckGo maps">>}.
 
--spec create_answer(binary(), binary()) -> answer().
-create_answer(Url, Query) ->
+-spec create_answer(binary(), binary(), binary()) -> answer().
+create_answer(Url, Source, Query) ->
     #{
         url => Url,
+        source => Source,
         query => Query
     }.
