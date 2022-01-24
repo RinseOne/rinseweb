@@ -69,7 +69,7 @@ ddg(_) ->
     ok.
 
 ddgi(_) ->
-    Command = <<"ddg">>,
+    Command = <<"ddgi">>,
     Query = <<"hello">>,
     Question = <<Command/binary, " ", Query/binary>>,
     ExpectedAnswer = result(Query, <<"https://duckduckgo.com/?t=rinseone&iax=images&ia=images&q=", Query/binary>>),
@@ -78,7 +78,7 @@ ddgi(_) ->
     ok.
 
 ddgv(_) ->
-    Command = <<"ddg">>,
+    Command = <<"ddgv">>,
     Query = <<"hello">>,
     Question = <<Command/binary, " ", Query/binary>>,
     ExpectedAnswer = result(Query, <<"https://duckduckgo.com/?t=rinseone&iax=videos&ia=videos&q=", Query/binary>>),
@@ -96,7 +96,7 @@ ddgn(_) ->
     ok.
 
 ddgm(_) ->
-    Command = <<"ddg">>,
+    Command = <<"ddgm">>,
     Query = <<"hello">>,
     Question = <<Command/binary, " ", Query/binary>>,
     ExpectedAnswer = result(Query, <<"https://duckduckgo.com/?t=rinseone&ia=news&iaxm=places&q=", Query/binary>>),
