@@ -42,7 +42,23 @@ hello_to_html(Req, State) ->
     <div>
         <h2 style=\"text-align:center;\"><span style=\"color:#0f2557\">r</span><span style=\"color:#28559a\">i</span><span style=\"color:#3778c2\">n</span><span style=\"color:#4b9fe1\">s</span><span style=\"color:#63bce5\">e</span></h2>
         <form id=\"search\">
-            <input id=\"question\" type=\"text\" autocapitalize=\"none\" size=\"30\" style=\"text-align:center\" />
+            <input id=\"question\" list=\"commands\" type=\"search\" autocapitalize=\"none\" size=\"30\" style=\"text-align:center\" />
+            <datalist id=\"commands\">
+                <option value=\"convert \"/>
+                <option value=\"ddg \"/>
+                <option value=\"ddgi \"/>
+                <option value=\"ddgm \"/>
+                <option value=\"ddgn \"/>
+                <option value=\"ddgv \"/>
+                <option value=\"define \"/>
+                <option value=\"md5 \"/>
+                <option value=\"now \"/>
+                <option value=\"sha \"/>
+                <option value=\"sha2 \"/>
+                <option value=\"uuid\"/>
+                <option value=\"wiki \"/>
+                <option value=\"how to \"/>
+            </datalist>
         </form>
         <br/><br/>
         <div id=\"results\">
