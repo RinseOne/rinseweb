@@ -134,6 +134,16 @@ get_all() ->
             ],
             handler => rinseweb_wiz_redirect
         },
+        #{ % operators
+            matches => [
+                #{
+                    type => regex,
+                    value => <<"^\\(?\\s*(\\+|-|\\/|\\*)((\\s+[-]?[0-9]*[.]?[0-9]+)+)\\s*\\)?$">>
+                }
+            ],
+            parser => {rinseweb_wiz_apply, parse_args},
+            handler => rinseweb_wiz_apply
+        },
         #{ % fallthrough default
             matches => [
                 #{
