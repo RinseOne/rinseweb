@@ -36,6 +36,11 @@ function render_answer(json) {
 function answerToNode(answer) {
     var node;
     switch(answer.type) {
+        case "number":
+            node = document.createElement('div');
+            node.setAttribute('class', 'simple');
+            node.appendChild(document.createTextNode(answer.answer.number));
+            break;
         case "text":
             node = document.createElement('div');
             node.setAttribute('class', 'simple');

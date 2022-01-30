@@ -33,7 +33,7 @@ answer(_Question, [FromNumBin, FromUnitBin, ToUnitBin]) ->
 answer_using_canonical_units(_, unknown, _) -> rinseweb_wiz:shrug(?ANSWER_SOURCE);
 answer_using_canonical_units(_, _, unknown) -> rinseweb_wiz:shrug(?ANSWER_SOURCE);
 answer_using_canonical_units(FromNumBin, FromUnit, ToUnit) ->
-    FromNum = round_precise(binary_to_number(FromNumBin)),
+    FromNum = rinseweb_util:round_precise(rinseweb_util:binary_to_number(FromNumBin)),
     ConversionResult = convert(FromNum, FromUnit, ToUnit),
     answer_conversion_result(FromNum, FromUnit, ToUnit, ConversionResult).
 
@@ -69,33 +69,11 @@ unit_arg(<<"celsius">>) -> "tempC";
 unit_arg(<<"fahrenheit">>) -> "tempF";
 unit_arg(UnitBin) when is_binary(UnitBin) -> binary_to_list(UnitBin).
 
--spec round_precise(number()) -> number().
-round_precise(Num) when is_integer(Num) -> Num;
-round_precise(Num) when is_float(Num) ->
-    if
-        round(Num) == Num -> round(Num);
-        true -> Num
-    end.
-
--spec binary_to_number(binary()) -> float() | integer().
-binary_to_number(<<".", Rest/binary>>) -> binary_to_number(<<"0.", Rest/binary>>);
-binary_to_number(<<"-.", Rest/binary>>) -> binary_to_number(<<"-0.", Rest/binary>>);
-binary_to_number(B) ->
-    try binary_to_float(B)
-    catch
-        error:badarg -> binary_to_integer(B)
-    end.
-
 -spec string_to_number(string()) -> number() | undefined.
-string_to_number([]) -> undefined;
 string_to_number("conformability error") -> undefined;
 string_to_number([$U,$n,$k,$n,$o,$w,$n|_]) -> undefined; % Handles "Unknown unit 'foo'" error
 string_to_number([$E,$r,$r,$o,$r|_]) -> undefined; % Handles "Error in 'foo': Parse error" error
-string_to_number(S) ->
-    case string:to_float(S) of
-        {error, no_float} -> list_to_integer(S);
-        {F, _Rest} -> F
-    end.
+string_to_number(S) -> rinseweb_util:string_to_number(S).
 
 -spec number_to_list(number()) -> list().
 number_to_list(Num) when is_integer(Num) -> integer_to_list(Num);

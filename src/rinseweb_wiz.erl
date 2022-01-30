@@ -8,6 +8,7 @@
 %% API
 -export([answer/1]).
 -export([answer/3]).
+-export([answer_number/3]).
 -export([answer_text/3]).
 -export([shrug/1]).
 
@@ -23,7 +24,7 @@
     source := answer_source(),
     answer => answer_custom()
 }.
--type answer_type() :: conversion_result | definition | hash | redirect | shrug | text | wiki.
+-type answer_type() :: conversion_result | definition | hash | number | redirect | shrug | text | wiki.
 -type answer_source() :: atom().
 -type answer_custom() :: any().
 -type args() :: [any()].
@@ -38,7 +39,7 @@
 
 -spec answer(question()) -> result().
 answer(Question) ->
-    TrimmedQuestion = binary_max_size(binary_trim(Question), 128),
+    TrimmedQuestion = binary_max_size(rinseweb_util:binary_trim(Question), 128),
     {Manifest, Args} = find_handler(TrimmedQuestion, rinseweb_manifests:get_all()),
     Answer = handler_answer(Manifest, TrimmedQuestion, Args),
     Answers = maybe_add_answer(Answer, []),
@@ -59,6 +60,13 @@ answer(Type, Source, Custom) ->
 answer_text(Type, Source, Bin) ->
     AnswerCustom = #{
         text => Bin
+    },
+    answer(Type, Source, AnswerCustom).
+
+-spec answer_number(answer_type(), answer_source(), number()) -> answer().
+answer_number(Type, Source, Num) ->
+    AnswerCustom = #{
+        number => Num
     },
     answer(Type, Source, AnswerCustom).
 
@@ -121,16 +129,3 @@ maybe_add_answer(Answer, Answers) -> [Answer|Answers].
 -spec binary_max_size(binary(), pos_integer()) -> binary().
 binary_max_size(Bin, Size) when byte_size(Bin) =< Size -> Bin;
 binary_max_size(Bin, Size) -> binary:part(Bin, 0, Size).
-
--spec binary_trim(binary()) -> binary().
-binary_trim(Bin) ->
-    binary_ltrim(binary_rtrim(Bin)).
-
--spec binary_ltrim(binary()) -> binary().
-binary_ltrim(<<32, Bin/binary>>) -> binary_ltrim(Bin);
-binary_ltrim(Bin) -> Bin.
-
--spec binary_rtrim(binary()) -> binary().
-binary_rtrim(Bin) when binary_part(Bin, {byte_size(Bin), -1}) =:= <<32>> ->
-    binary_rtrim(binary_part(Bin, {0, byte_size(Bin) - 1}));
-binary_rtrim(Bin) -> Bin.
