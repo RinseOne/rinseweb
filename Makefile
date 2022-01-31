@@ -11,11 +11,14 @@ cover:
 	@$(REBAR3) ct --cover --cover_export_name=all
 	@$(REBAR3) cover --verbose
 
+deps:
+	@$(REBAR3) get-deps
+
 dialyze:
 	@$(REBAR3) dialyzer
 
-deps:
-	@$(REBAR3) get-deps
+doc:
+	@$(REBAR3) edoc
 
 rel: all
 	@$(REBAR3) release
@@ -28,8 +31,9 @@ release: set-version
 run:
 	@$(REBAR3) shell
 
-doc:
-	@$(REBAR3) edoc
+set-version:
+	@sed -i "s/{rinseweb, \"[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+\"}/{rinseweb, \"$(version)\"}/" rebar.config
+	@sed -i "s/{vsn, \"[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+\"}/{vsn, \"$(version)\"}/" src/rinseweb.app.src
 
 tests:
 ifeq ($(filter),)
@@ -38,8 +42,4 @@ else
 	@$(REBAR3) ct --logdir logs/ct --suite=$(filter)
 endif
 
-set-version:
-	@sed -i "s/{rinseweb, \"[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+\"}/{rinseweb, \"$(version)\"}/" rebar.config
-	@sed -i "s/{vsn, \"[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+\"}/{vsn, \"$(version)\"}/" src/rinseweb.app.src
-
-.PHONY: all compile cover dialyze deps rel release run doc tests set-version
+.PHONY: all compile cover deps dialyze doc rel release run set-version tests
