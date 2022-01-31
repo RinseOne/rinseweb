@@ -14,6 +14,7 @@
 -export([url_encode/1]).
 -export([round_precise/1]).
 -export([string_to_number/1]).
+-export([number_to_binary/1]).
 -export([binary_to_number/1]).
 
 %% ============================================================================
@@ -26,6 +27,7 @@ all() ->
         url_encode,
         round_precise,
         string_to_number,
+        number_to_binary,
         binary_to_number
     ].
 
@@ -73,11 +75,17 @@ string_to_number(_) ->
     5.2 = rinseweb_util:string_to_number("5.20"),
     0.2 = rinseweb_util:string_to_number("0.2").
 
+number_to_binary(_) ->
+    <<"5">> = rinseweb_util:number_to_binary(5),
+    <<"-5">> = rinseweb_util:number_to_binary(-5),
+    <<"5.7">> = rinseweb_util:number_to_binary(5.7).
+
 binary_to_number(_) ->
     5 = rinseweb_util:binary_to_number(<<"5">>),
     5.2 = rinseweb_util:binary_to_number(<<"5.2">>),
     -5.2 = rinseweb_util:binary_to_number(<<"-5.2">>),
     5.2 = rinseweb_util:binary_to_number(<<"5.20">>),
     0.2 = rinseweb_util:binary_to_number(<<"0.2">>),
+    0.2 = rinseweb_util:binary_to_number(<<".2">>),
     -0.2 = rinseweb_util:binary_to_number(<<"-0.2">>),
     -0.2 = rinseweb_util:binary_to_number(<<"-.2">>).
