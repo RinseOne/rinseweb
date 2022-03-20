@@ -2,6 +2,7 @@ h2 {font-size:5em;font-family:monospace;}
 form#search {display:flex;justify-content:center;}
 input[type="search"] {font-size:3em;}
 div#answer {font-size:3em;font-family:sans-serif;width:80%;margin-left:auto;margin-right:auto;}
+div#answer > div.error {text-align:center;font-size:0.7em;}
 div#answer > div.simple {text-align:center;}
 div#answer > ul {margin:0;padding:0;list-style-type:none;font-size:0.5em;}
 div#answer > ul.wiki > li {white-space:nowrap;overflow:hidden;text-overflow:clip;margin:10px;}

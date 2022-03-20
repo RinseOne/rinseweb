@@ -132,6 +132,11 @@ function answerToNode(answer) {
             node.appendChild(linkNode);
             window.open(url, '_blank');
             break;
+        case "shrug":
+            node = document.createElement('div');
+            node.setAttribute('class', 'error');
+            node.appendChild(document.createTextNode(answer.answer));
+            break;
         default:
             node = document.createTextNode("");
     };
