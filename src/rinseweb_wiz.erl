@@ -10,7 +10,7 @@
 -export([answer/3]).
 -export([answer_number/3]).
 -export([answer_text/3]).
--export([shrug/1]).
+-export([shrug/2]).
 
 %% Types
 -type result() :: #{
@@ -70,11 +70,12 @@ answer_number(Type, Source, Num) ->
     },
     answer(Type, Source, AnswerCustom).
 
--spec shrug(answer_source()) -> answer().
-shrug(Source) ->
+-spec shrug(answer_source(), binary()) -> answer().
+shrug(Source, Text) ->
     #{
         type => shrug,
-        source => Source
+        source => Source,
+        answer => Text
     }.
 
 %%====================================================================

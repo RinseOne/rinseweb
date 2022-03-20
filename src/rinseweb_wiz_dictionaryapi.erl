@@ -55,12 +55,12 @@ search(Query) ->
     parse_response(Response).
 
 -spec parse_response({ok, {httpc:status_line(), httpc:headers(), binary()}} | {error, term()}) -> rinseweb_wiz:answer().
-parse_response({error, _Reason}) -> rinseweb_wiz:shrug(?SOURCE);
+parse_response({error, _Reason}) -> rinseweb_wiz:shrug(?SOURCE, <<"Error querying dictionary">>);
 parse_response({ok, {{_Version, 200, _ReasonPhrase}, _Headers, Body}}) ->
     BodyDecoded = jsx:decode(Body, [{return_maps, true}]),
     rinseweb_wiz:answer(?TYPE, ?SOURCE, parse_body(BodyDecoded));
 parse_response({ok, {{_Version, _Status, _ReasonPhrase}, _Headers, _Body}}) ->
-    rinseweb_wiz:shrug(?SOURCE).
+    rinseweb_wiz:shrug(?SOURCE, <<"Error response from dictionary">>).
 
 -spec parse_body(list()) -> [item()].
 parse_body(ListOfItems) ->
