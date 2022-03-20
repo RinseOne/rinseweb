@@ -58,13 +58,19 @@ search(Query) ->
 parse_response({error, _Reason}) -> rinseweb_wiz:shrug(?SOURCE, <<"Error querying dictionary">>);
 parse_response({ok, {{_Version, 200, _ReasonPhrase}, _Headers, Body}}) ->
     BodyDecoded = jsx:decode(Body, [{return_maps, true}]),
-    rinseweb_wiz:answer(?TYPE, ?SOURCE, parse_body(BodyDecoded));
+    answer_or_shrug(parse_body(BodyDecoded));
+parse_response({ok, {{_Version, 404, _ReasonPhrase}, _Headers, _Body}}) ->
+    rinseweb_wiz:shrug(?SOURCE, <<"Definition not found">>);
 parse_response({ok, {{_Version, _Status, _ReasonPhrase}, _Headers, _Body}}) ->
     rinseweb_wiz:shrug(?SOURCE, <<"Error response from dictionary">>).
 
 -spec parse_body(list()) -> [item()].
 parse_body(ListOfItems) ->
     lists:reverse(parse_body(ListOfItems, [])).
+
+-spec answer_or_shrug([item()]) -> rinseweb_wiz:answer().
+answer_or_shrug([]) -> rinseweb_wiz:shrug(?SOURCE, <<"Definition not found">>);
+answer_or_shrug(ParsedItems) -> rinseweb_wiz:answer(?TYPE, ?SOURCE, ParsedItems).
 
 -spec parse_body(list(), [item()]) -> [item()].
 parse_body([], Acc) -> Acc;

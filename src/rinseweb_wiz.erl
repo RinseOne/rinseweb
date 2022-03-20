@@ -42,7 +42,7 @@ answer(Question) ->
     TrimmedQuestion = binary_max_size(rinseweb_util:binary_trim(Question), 128),
     {Manifest, Args} = find_handler(TrimmedQuestion, rinseweb_manifests:get_all()),
     Answer = handler_answer(Manifest, TrimmedQuestion, Args),
-    Answers = maybe_add_answer(Answer, []),
+    Answers = [Answer],
     #{
         question => TrimmedQuestion,
         answers => Answers
@@ -122,10 +122,6 @@ handler_answer(#{handler := Handler, cache := _CacheOptions}, Question, Args) ->
     end;
 handler_answer(#{handler := Handler}, Question, Args) ->
     Handler:answer(Question, Args).
-
--spec maybe_add_answer(answer(), answers()) -> answers().
-maybe_add_answer(#{type := shrug}, Answers) -> Answers;
-maybe_add_answer(Answer, Answers) -> [Answer|Answers].
 
 -spec binary_max_size(binary(), pos_integer()) -> binary().
 binary_max_size(Bin, Size) when byte_size(Bin) =< Size -> Bin;

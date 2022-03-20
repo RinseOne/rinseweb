@@ -72,7 +72,6 @@ answer_to_text(Req, State) ->
 %% Internal functions
 %%====================================================================
 
-result_to_binary(#{answers := []}) -> unicode:characters_to_binary("¯\\_(ツ)_/¯");
 result_to_binary(#{answers := [#{type := Type, answer := AnswerCustom}|_]}) ->
     answer_to_binary(Type, AnswerCustom).
 
