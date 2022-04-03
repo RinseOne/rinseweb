@@ -42,7 +42,13 @@ max_question_length(_) ->
     QuestionMax = binary:copy(<<"a">>, 128),
     ExpectedAnswer = #{
         question => QuestionMax,
-        answers => []
+        answers => [
+            #{
+                answer => <<"Unrecognized command">>,
+                source => default,
+                type => shrug
+            }
+        ]
     },
     Answer = rinseweb_wiz:answer(QuestionLong),
     ExpectedAnswer = Answer,

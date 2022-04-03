@@ -50,8 +50,16 @@ end_per_testcase(_, _Config) ->
 %% Helpers
 %% ============================================================================
 
-result_no_answers(Question) when is_list(Question) ->
-    result_custom_answers(Question, []).
+result_shrug(Question) when is_list(Question) ->
+    result_shrug(Question, <<"Unrecognized command">>, <<"default">>).
+
+result_shrug(Question, Reason, Source) when is_list(Question) ->
+    Shrug = #{
+        <<"answer">> => Reason,
+        <<"source">> => Source,
+        <<"type">> => <<"shrug">>
+    },
+    result_custom_answers(Question, [Shrug]).
 
 result_custom_answers(Question, Answers) ->
     #{
@@ -113,7 +121,7 @@ convert_unrecognized_syntax(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = result_no_answers(Question),
+    ExpectedResponse = result_shrug(Question),
     ExpectedResponse = Response,
     ok.
 
@@ -122,7 +130,7 @@ convert_unsupported_unit(_) ->
     {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
     Response = rinseweb_test:decode_response_body(ResponseBody),
     true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = result_no_answers(Question),
+    ExpectedResponse = result_shrug(Question, <<"Unknown unit 'jujumeters'">>, <<"convert">>),
     ExpectedResponse = Response,
     ok.
 
@@ -136,7 +144,7 @@ convert_invalid_number(_) ->
             {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
             Response = rinseweb_test:decode_response_body(ResponseBody),
             true = lists:member({"content-type","application/json"}, Headers),
-            ExpectedResponse = result_no_answers(Question),
+            ExpectedResponse = result_shrug(Question),
             ExpectedResponse = Response,
             Acc
         end,

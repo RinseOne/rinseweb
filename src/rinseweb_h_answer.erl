@@ -72,11 +72,11 @@ answer_to_text(Req, State) ->
 %% Internal functions
 %%====================================================================
 
-result_to_binary(#{answers := []}) -> unicode:characters_to_binary("¯\\_(ツ)_/¯");
 result_to_binary(#{answers := [#{type := Type, answer := AnswerCustom}|_]}) ->
     answer_to_binary(Type, AnswerCustom).
 
 -spec answer_to_binary(atom(), map()) -> binary().
+answer_to_binary(shrug, Reason) -> Reason;
 answer_to_binary(text, #{text := Text}) -> Text;
 answer_to_binary(hash, #{hash := Hash}) -> Hash;
 answer_to_binary(conversion_result, AnswerCustom) ->

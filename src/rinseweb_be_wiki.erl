@@ -34,7 +34,7 @@ search(BaseUri, Query) ->
     Items.
 
 -spec items_to_answer(rinseweb_wiz:answer_source(), [item()]) -> rinseweb_wiz:anwer().
-items_to_answer(Source, []) -> rinseweb_wiz:shrug(Source);
+items_to_answer(Source, []) -> rinseweb_wiz:shrug(Source, <<"No results">>);
 items_to_answer(Source, Items) -> rinseweb_wiz:answer(?TYPE, Source, Items).
 
 %%====================================================================

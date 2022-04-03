@@ -92,16 +92,17 @@ unit_coverage(_) ->
 
 unit_invalid(_) ->
     TestCases = [
-        {<<"kg">>, <<"foo">>},
-        {<<"foo">>, <<"kg">>},
-        {<<"foo">>, <<"bar">>},
-        {<<"kg">>, <<"mm">>},
-        {<<"meters^2">>, <<"^2">>}
+        {<<"kg">>, <<"foo">>, <<"Unknown unit 'foo'">>},
+        {<<"foo">>, <<"kg">>, <<"Unknown unit 'foo'">>},
+        {<<"foo">>, <<"bar">>, <<"Unknown unit 'foo'">>},
+        {<<"kg">>, <<"1234567890123456789012345678901">>, <<"Unknown unit '123456789012345678901234567890'">>},
+        {<<"kg">>, <<"mm">>, <<"Unable to convert between non-conforming units">>},
+        {<<"meters^2">>, <<"m^">>, <<"Error in 'm^': Parse error">>}
     ],
-    ExpectedAnswer = rinseweb_wiz:shrug(convert),
     UnitNum = <<"1">>,
-    F = fun({UnitFrom, UnitTo}, Acc) ->
+    F = fun({UnitFrom, UnitTo, ErrorReason}, Acc) ->
             Question = <<"convert ", UnitNum/binary, UnitFrom/binary, " to ", UnitTo/binary>>,
+            ExpectedAnswer = rinseweb_wiz:shrug(convert, ErrorReason),
             ExpectedAnswer = rinseweb_wiz_convert:answer(Question, [UnitNum, UnitFrom, UnitTo]),
             Acc
         end,

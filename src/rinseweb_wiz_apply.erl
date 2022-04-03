@@ -30,16 +30,17 @@ answer(_Question, [Operator, OperandsBin, _]) ->
 %% Internal functions
 %%====================================================================
 
--spec answer(result() | undefined) -> rinseweb_wiz:answer().
-answer(undefined) -> rinseweb_wiz:shrug(?ANSWER_SOURCE);
+-spec answer(result() | {error, binary()}) -> rinseweb_wiz:answer().
+answer({error, Reason}) -> rinseweb_wiz:shrug(?ANSWER_SOURCE, Reason);
 answer(Num) ->
     rinseweb_wiz:answer_number(?ANSWER_TYPE, ?ANSWER_SOURCE, Num).
 
--spec parse_operator(binary()) -> operator().
+-spec parse_operator(binary()) -> operator() | {error, binary()}.
 parse_operator(<<"+">>) -> '+';
 parse_operator(<<"-">>) -> '-';
 parse_operator(<<"/">>) -> '/';
-parse_operator(<<"*">>) -> '*'.
+parse_operator(<<"*">>) -> '*';
+parse_operator(_) -> {error, <<"Unknown operator">>}.
 
 -spec parse_operands([binary()]) -> [operand()].
 parse_operands(BinOpList) ->
@@ -54,12 +55,12 @@ parse_operands([BinOp|Rest], Acc) ->
 parse_operand(BinOp) ->
     rinseweb_util:round_precise(rinseweb_util:binary_to_number(BinOp)).
 
--spec apply_op(operator(), [operand()]) -> result() | undefined.
+-spec apply_op(operator() | {error, binary()}, [operand()]) -> result() | {error, binary()}.
 apply_op('+', Operands) -> lists:sum(Operands);
 apply_op('-', [First|Rest]) -> apply_op_sub(First, Rest);
 apply_op('*', [First|Rest]) -> apply_op_mul(First, Rest);
 apply_op('/', [First|Rest]) -> apply_op_div(First, Rest);
-apply_op(_, _) -> undefined.
+apply_op({error, Reason}, _) -> {error, Reason}.
 
 -spec apply_op_sub(operand(), [operand()]) -> result().
 apply_op_sub(Result, []) -> Result;

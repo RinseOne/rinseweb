@@ -16,5 +16,6 @@
 answer(_Question, _Args) ->
     #{
         type => shrug,
-        source => default
+        source => default,
+        answer => <<"Unrecognized command">>
     }.

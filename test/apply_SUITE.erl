@@ -14,6 +14,7 @@
 -export([subtract/1]).
 -export([multiply/1]).
 -export([divide/1]).
+-export([unknown_operator/1]).
 
 %% ============================================================================
 %% ct functions
@@ -24,7 +25,8 @@ all() ->
         add,
         subtract,
         multiply,
-        divide
+        divide,
+        unknown_operator
     ].
 
 init_per_suite(Config) ->
@@ -70,3 +72,10 @@ divide(_) ->
     number = maps:get(type, Answer),
     apply = maps:get(source, Answer),
     0.5 = maps:get(number, maps:get(answer, Answer)).
+
+unknown_operator(_) ->
+    Question = <<"^ 1 2 3">>,
+    Answer = rinseweb_wiz_apply:answer(Question, [<<"^">>, <<" 1 2 3">>, <<" 3">>]),
+    shrug = maps:get(type, Answer),
+    apply = maps:get(source, Answer),
+    <<"Unknown operator">> = maps:get(answer, Answer).

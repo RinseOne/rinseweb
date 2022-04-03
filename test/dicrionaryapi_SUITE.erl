@@ -49,4 +49,3 @@ query(_) ->
     true = maps:is_key(word, FirstItem),
     true = maps:is_key(phonetics, FirstItem),
     true = maps:is_key(meanings, FirstItem).
-
