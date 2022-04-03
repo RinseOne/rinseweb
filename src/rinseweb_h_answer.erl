@@ -76,6 +76,7 @@ result_to_binary(#{answers := [#{type := Type, answer := AnswerCustom}|_]}) ->
     answer_to_binary(Type, AnswerCustom).
 
 -spec answer_to_binary(atom(), map()) -> binary().
+answer_to_binary(shrug, Reason) -> Reason;
 answer_to_binary(text, #{text := Text}) -> Text;
 answer_to_binary(hash, #{hash := Hash}) -> Hash;
 answer_to_binary(conversion_result, AnswerCustom) ->
