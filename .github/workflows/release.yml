@@ -12,10 +12,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up Erlang
-        uses: gleam-lang/setup-erlang@v1.1.2
+        uses: erlef/setup-beam@v1
         with:
-          # https://packages.erlang-solutions.com/erlang/debian/pool/esl-erlang_24.0.5-1~ubuntu~focal_amd64.deb
-          otp-version: 24.0.5
+          # https://packages.erlang-solutions.com/erlang/debian/pool/esl-erlang_24.3.3-1~ubuntu~focal_amd64.deb
+          otp-version: 24.3.3
       - name: Install units
         run: sudo apt install units
       - name: Test
