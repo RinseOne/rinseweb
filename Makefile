@@ -26,7 +26,7 @@ rel: all
 release: set-version
 	git commit -a -m "Update version to $(version)"
 	git tag $(version)
-	git push --atomic origin master $(version)
+	git push --atomic origin main $(version)
 
 run:
 	@$(REBAR3) shell

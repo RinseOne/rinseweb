@@ -55,5 +55,5 @@ Update version to prepare for release; for example, to set version `1.2.3`, tag 
 make set-version version=1.2.3
 git commit -a -m "Update version to 1.2.3"
 git tag 1.2.3
-git push --atomic origin master 1.2.3
+git push --atomic origin main 1.2.3
 ```
