@@ -45,19 +45,19 @@ end_per_testcase(_, _Config) ->
 %% ============================================================================
 
 web_root_response_contains_form(_) ->
-    {ok, {{"HTTP/1.1", 200, "OK"}, _Headers, ResponseBody}} = httpc:request("http://localhost:8080"),
+    {ok, {{"HTTP/1.1", 200, "OK"}, _Headers, ResponseBody}} = httpc:request(rinseweb_test:base_uri()),
     FoundPos = string:str(ResponseBody, "<form id=\"search\">"),
     true = FoundPos > 0,
     ok.
 
 web_app_js_loads(_) ->
-    {ok, {{"HTTP/1.1", 200, "OK"}, _Headers, _ResponseBody}} = httpc:request("http://localhost:8080/assets/app.js"),
+    {ok, {{"HTTP/1.1", 200, "OK"}, _Headers, _ResponseBody}} = httpc:request(rinseweb_test:base_uri() ++ "/assets/app.js"),
     ok.
 
 web_about_page_loads(_) ->
-    {ok, {{"HTTP/1.1", 200, "OK"}, _Headers, _ResponseBody}} = httpc:request("http://localhost:8080/about"),
+    {ok, {{"HTTP/1.1", 200, "OK"}, _Headers, _ResponseBody}} = httpc:request(rinseweb_test:base_uri() ++ "/about"),
     ok.
 
 web_commands_page_loads(_) ->
-    {ok, {{"HTTP/1.1", 200, "OK"}, _Headers, _ResponseBody}} = httpc:request("http://localhost:8080/commands"),
+    {ok, {{"HTTP/1.1", 200, "OK"}, _Headers, _ResponseBody}} = httpc:request(rinseweb_test:base_uri() ++ "/commands"),
     ok.
