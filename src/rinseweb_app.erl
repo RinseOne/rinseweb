@@ -19,7 +19,8 @@ start(_StartType, _StartArgs) ->
             {"/assets/[...]", cowboy_static, {priv_dir, rinseweb, "static/assets"}}
         ]}
     ]),
-    {ok, _} = cowboy:start_clear(http, [{port, 8080}], #{
+    Port = rinseweb_env:port(),
+    {ok, _} = cowboy:start_clear(http, [{port, Port}], #{
         env => #{dispatch => Dispatch}
     }),
     ok = init_cache(),
