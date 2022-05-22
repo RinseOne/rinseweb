@@ -4,7 +4,6 @@ workflows:
   version: 2
   test:
     jobs:
-      - test-23
       - test-24
 
 erlang-test-steps: &erlang-test-steps
@@ -24,11 +23,7 @@ erlang-test-steps: &erlang-test-steps
         working_directory: ~/repo
 
 jobs:
-  test-23:
-    <<: *erlang-test-steps
-    docker:
-      - image: circleci/erlang:23
   test-24:
     <<: *erlang-test-steps
     docker:
-      - image: circleci/erlang:24
+      - image: cimg/1.13-erlang-24.3
