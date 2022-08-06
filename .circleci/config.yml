@@ -5,6 +5,7 @@ workflows:
   test:
     jobs:
       - test-24
+      - test-25
 
 erlang-test-steps: &erlang-test-steps
   steps:
@@ -26,4 +27,8 @@ jobs:
   test-24:
     <<: *erlang-test-steps
     docker:
-      - image: cimg/1.13-erlang-24.3
+      - image: cimg/elixir:1.13-erlang-24.3
+  test-25:
+    <<: *erlang-test-steps
+    docker:
+      - image: cimg/elixir:1.13-erlang-25.0.3
