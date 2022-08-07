@@ -11,7 +11,7 @@ erlang-test-steps: &erlang-test-steps
   steps:
     - run:
         name: install units
-        command: sudo apt install units
+        command: sudo apt update && sudo apt install -y units
     - checkout:
         path: ~/repo
     - run:
