@@ -4,14 +4,17 @@ workflows:
   version: 2
   test:
     jobs:
-      - test-23
       - test-24
+      - test-25
 
 erlang-test-steps: &erlang-test-steps
   steps:
     - run:
+        name: get latest rebar3
+        command: curl -sSL -o ~/bin/rebar3 https://s3.amazonaws.com/rebar3/rebar3 && chmod +x ~/bin/rebar3
+    - run:
         name: install units
-        command: sudo apt install units
+        command: sudo apt update && sudo apt install -y units
     - checkout:
         path: ~/repo
     - run:
@@ -24,11 +27,11 @@ erlang-test-steps: &erlang-test-steps
         working_directory: ~/repo
 
 jobs:
-  test-23:
-    <<: *erlang-test-steps
-    docker:
-      - image: circleci/erlang:23
   test-24:
     <<: *erlang-test-steps
     docker:
-      - image: circleci/erlang:24
+      - image: cimg/elixir:1.13-erlang-24.3
+  test-25:
+    <<: *erlang-test-steps
+    docker:
+      - image: cimg/elixir:1.13-erlang-25.0.3
