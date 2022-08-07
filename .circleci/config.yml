@@ -10,6 +10,9 @@ workflows:
 erlang-test-steps: &erlang-test-steps
   steps:
     - run:
+        name: get latest rebar3
+        command: curl -sSL -o ~/bin/rebar3 https://s3.amazonaws.com/rebar3/rebar3 && chmod +x ~/bin/rebar3
+    - run:
         name: install units
         command: sudo apt update && sudo apt install -y units
     - checkout:
