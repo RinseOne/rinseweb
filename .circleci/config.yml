@@ -34,4 +34,4 @@ jobs:
   test-25:
     <<: *erlang-test-steps
     docker:
-      - image: cimg/elixir:1.13-erlang-25.0.3
+      - image: cimg/elixir:1.13-erlang-25.0.4
