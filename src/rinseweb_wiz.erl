@@ -7,6 +7,7 @@
 
 %% API
 -export([answer/1]).
+-export([answer/2]).
 -export([answer/3]).
 -export([answer_number/3]).
 -export([answer_text/3]).
@@ -18,6 +19,9 @@
     answers := answers()
 }.
 -type question() :: binary().
+-type req() :: #{
+    client_ip := binary()
+}.
 -type answers() :: [answer()].
 -type answer() :: #{
     type := answer_type(),
@@ -39,6 +43,10 @@
 
 -spec answer(question()) -> result().
 answer(Question) ->
+    answer(Question, #{}).
+
+-spec answer(question(), req()) -> result().
+answer(Question, Req) ->
     TrimmedQuestion = binary_max_size(rinseweb_util:binary_trim(Question), 128),
     {Manifest, Args} = find_handler(TrimmedQuestion, rinseweb_manifests:get_all()),
     Answer = handler_answer(Manifest, TrimmedQuestion, Args),
