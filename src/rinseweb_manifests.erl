@@ -134,6 +134,15 @@ get_all() ->
             ],
             handler => rinseweb_wiz_redirect
         },
+        #{ % what is my ip
+            matches => [
+                #{
+                    type => regex,
+                    value => <<"^(?i:what is my ip|wimip)$">>
+                }
+            ],
+            handler => rinseweb_wiz_wimip
+        },
         #{ % operators
             matches => [
                 #{
