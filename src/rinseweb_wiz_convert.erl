@@ -51,7 +51,7 @@ answer_conversion_result(FromNum, FromUnit, ToUnit, ToNum) ->
 
 -spec convert(number(), unit(), unit()) -> number() | {error, binary()}.
 convert(Num, FromUnit, ToUnit) ->
-    Command = "units --terse",
+    Command = "units --terse -o %.8e",
     FromArg = units_from_arg(Num, FromUnit),
     ToArg = " '" ++ unit_arg(ToUnit) ++ "'",
     RawUnitsResult = os:cmd([Command, FromArg, ToArg]),
