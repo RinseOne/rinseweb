@@ -15,6 +15,7 @@ jobs:
         uses: erlef/setup-beam@v1
         with:
           otp-version: 25.3
+          rebar3-version: 3
       - name: Install units
         run: sudo apt install units
       - name: Test
