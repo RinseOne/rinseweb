@@ -73,7 +73,11 @@ string_to_number(_) ->
     5.2 = rinseweb_util:string_to_number("5.2"),
     -5.2 = rinseweb_util:string_to_number("-5.2"),
     5.2 = rinseweb_util:string_to_number("5.20"),
-    0.2 = rinseweb_util:string_to_number("0.2").
+    0.2 = rinseweb_util:string_to_number("0.2"),
+    1.3e+15 = rinseweb_util:string_to_number("1.3e+15"),
+    -1.3e+15 = rinseweb_util:string_to_number("-1.3e+15"),
+    1.0e+15 = rinseweb_util:string_to_number("1e+15"),
+    -1.0e+15 = rinseweb_util:string_to_number("-1e+15").
 
 number_to_binary(_) ->
     <<"5">> = rinseweb_util:number_to_binary(5),
