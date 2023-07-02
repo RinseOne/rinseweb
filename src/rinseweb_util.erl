@@ -41,8 +41,9 @@ round_precise(Num) when is_float(Num) ->
 -spec string_to_number(string()) -> number() | undefined.
 string_to_number([]) -> undefined;
 string_to_number(S) ->
-    case string:to_float(S) of
-        {error, no_float} -> list_to_integer(S);
+    case string:to_float(make_sci_notation_use_floats(S)) of
+        {error, no_float} ->
+            list_to_integer(S);
         {F, _Rest} -> F
     end.
 
@@ -75,3 +76,25 @@ binary_rtrim(Bin) -> Bin.
 -spec url_encode_string(string()) -> string().
 url_encode_string(Str) ->
     edoc_lib:escape_uri(Str).
+
+%% @doc converts 1e+15 to 1.0e+15
+-spec make_sci_notation_use_floats(string()) -> string().
+make_sci_notation_use_floats(Str) ->
+    fix_sci_notation(Str, string:split(Str, "e+")).
+
+-spec fix_sci_notation(string(), [string()]) -> string().
+fix_sci_notation(Orig, [Orig]) -> Orig;
+fix_sci_notation(Orig, [Left, Right]) ->
+    case is_string_integer(Left) of
+        true -> Left ++ ".0" ++ "e+" ++ Right;
+        false -> Orig
+    end.
+
+-spec is_string_integer(string()) -> boolean().
+is_string_integer(Str) ->
+    try
+        _ = list_to_integer(Str),
+        true
+    catch error:badarg ->
+        false
+    end.

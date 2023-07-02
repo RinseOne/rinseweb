@@ -45,7 +45,7 @@ answer_conversion_result(FromNum, FromUnit, ToUnit, ToNum) ->
         unit_from_name => FromUnit,
         unit_from_number => FromNum,
         unit_to_name => ToUnit,
-        unit_to_number => ToNum
+        unit_to_number => rinseweb_util:round_precise(ToNum)
     },
     rinseweb_wiz:answer(?ANSWER_TYPE, ?ANSWER_SOURCE, AnswerCustom).
 
