@@ -6,7 +6,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-22.04
-    name: 
+    name: Test on Erlang/OTP ${{matrix.otp}}
     strategy:
       matrix:
         otp: ['24.3', '25.3']
@@ -20,6 +20,6 @@ jobs:
       - name: Install units
         run: sudo apt install units
       - name: Run tests
-        run: make tests
+        run: rebar3 ct
       - name: Run dialyzer
-        run: make dialyze
+        run: rebar3 dialyzer
