@@ -1,0 +1,25 @@
+name: test
+
+on:
+  push
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    name: 
+    strategy:
+      matrix:
+        otp: ['24.3', '25.3']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Erlang
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{matrix.otp}}
+      - name: Install units
+        run: sudo apt install units
+      - name: Run tests
+        run: make tests
+      - name: Run dialyzer
+        run: make dialyze
