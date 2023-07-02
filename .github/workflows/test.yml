@@ -11,14 +11,13 @@ jobs:
       matrix:
         otp: ['24.3', '25.3']
     steps:
-      - name: Get latest rebar3
-        run: curl -sSL -o ~/bin/rebar3 https://s3.amazonaws.com/rebar3/rebar3 && chmod +x ~/bin/rebar3
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up Erlang
         uses: erlef/setup-beam@v1
         with:
           otp-version: ${{matrix.otp}}
+          rebar3-version: 3
       - name: Install units
         run: sudo apt install units
       - name: Run tests
