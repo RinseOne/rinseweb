@@ -1,6 +1,5 @@
 -module(convert_web_SUITE).
 
--include_lib("stdlib/include/assert.hrl").
 -include_lib("common_test/include/ct.hrl").
 
 %% ct functions
@@ -166,6 +165,5 @@ convert_use_cache(_) ->
     ExpectedResponse1 = result(Question, 20, <<"km">>, 20000, <<"m">>),
     ExpectedResponse2 = result_custom_answers(Question, [#{<<"foo">> => <<"bar">>}]),
     ExpectedResponse1 = Response1,
-    ?assertEqual(ExpectedResponse1, Response1, "Original response didn't match"),
     ExpectedResponse2 = Response2,
     ok.
