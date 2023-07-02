@@ -6,7 +6,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-22.04
-    name: Erlang/OTP ${{matrix.otp}} / rebar3 ${{matrix.rebar3}}
+    name: Erlang/OTP ${{matrix.otp}}
     strategy:
       matrix:
         otp: ['24.3', '25.3']
