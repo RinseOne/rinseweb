@@ -23,10 +23,10 @@ jobs:
       - name: Create release
         run: rebar3 release
       - name: Create release archive
-        run: tar -czf rinseweb.tar.gz -C _build/default/rel .
+        run: tar -czf rinseweb-ubuntu-22.04-amd64.tar.gz -C _build/default/rel .
       - name: Create github release
         uses: softprops/action-gh-release@v1
         with:
-          files: rinseweb.tar.gz
+          files: rinseweb-ubuntu-22.04-amd64.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
