@@ -8,32 +8,18 @@
 %% API
 -export([answer/1]).
 -export([answer/2]).
--export([answer/3]).
--export([answer_number/3]).
--export([answer_text/3]).
--export([shrug/2]).
 
 %% Types
 -type result() :: #{
     question := binary(),
-    answers := answers()
+    answers := [rinseweb_answer:answer()]
 }.
 -type question() :: binary().
 -type req() :: #{
     client_ip := binary()
 }.
--type answers() :: [answer()].
--type answer() :: #{
-    type := answer_type(),
-    source := answer_source(),
-    answer => answer_custom()
-}.
--type answer_type() :: conversion_result | definition | hash | number | redirect | shrug | text | wiki.
--type answer_source() :: atom().
--type answer_custom() :: any().
 -type args() :: [any()].
 
--export_type([answer_source/0]).
 -export_type([question/0]).
 -export_type([result/0]).
 
@@ -43,7 +29,7 @@
 
 -spec answer(question()) -> result().
 answer(Question) ->
-    answer(Question, #{}).
+    answer(Question, #{client_ip => <<>>}).
 
 -spec answer(question(), req()) -> result().
 answer(Question, Req) ->
@@ -54,36 +40,6 @@ answer(Question, Req) ->
     #{
         question => TrimmedQuestion,
         answers => Answers
-    }.
-
--spec answer(answer_type(), answer_source(), answer_custom()) -> answer().
-answer(Type, Source, Custom) ->
-    #{
-        type => Type,
-        source => Source,
-        answer => Custom
-    }.
-
--spec answer_text(answer_type(), answer_source(), binary()) -> answer().
-answer_text(Type, Source, Bin) ->
-    AnswerCustom = #{
-        text => Bin
-    },
-    answer(Type, Source, AnswerCustom).
-
--spec answer_number(answer_type(), answer_source(), number()) -> answer().
-answer_number(Type, Source, Num) ->
-    AnswerCustom = #{
-        number => Num
-    },
-    answer(Type, Source, AnswerCustom).
-
--spec shrug(answer_source(), binary()) -> answer().
-shrug(Source, Text) ->
-    #{
-        type => shrug,
-        source => Source,
-        answer => Text
     }.
 
 %%====================================================================
@@ -118,7 +74,7 @@ find_handler_check_result({match, Manifest, Args}, _Question, _Rest) ->
 find_handler_check_result(nomatch, Question, Rest) ->
     find_handler(Question, Rest).
 
--spec handler_answer(rinseweb_manifests:manifest(), question(), args()) -> answer().
+-spec handler_answer(rinseweb_manifests:manifest(), question(), args()) -> rinseweb_answer:answer().
 handler_answer(#{handler := Handler, cache := _CacheOptions}, Question, Args) ->
     case rinseweb_cache:get(Handler, Question) of
         undefined ->

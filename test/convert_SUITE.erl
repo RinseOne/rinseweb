@@ -103,7 +103,7 @@ unit_invalid(_) ->
     UnitNum = <<"1">>,
     F = fun({UnitFrom, UnitTo, ErrorReason}, Acc) ->
             Question = <<"convert ", UnitNum/binary, UnitFrom/binary, " to ", UnitTo/binary>>,
-            ExpectedAnswer = rinseweb_wiz:shrug(convert, ErrorReason),
+            ExpectedAnswer = rinseweb_answer:new_shrug(convert, ErrorReason),
             ExpectedAnswer = rinseweb_wiz_convert:answer(Question, [UnitNum, UnitFrom, UnitTo]),
             Acc
         end,

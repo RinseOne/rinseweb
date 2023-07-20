@@ -18,15 +18,15 @@
 %% API
 %%====================================================================
 
--spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_wiz:answer().
+-spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_answer:answer().
 answer(_Question, []) ->
     Timestamp = erlang:system_time(second),
-    rinseweb_wiz:answer_text(?ANSWER_TYPE, ?ANSWER_SOURCE, integer_to_binary(Timestamp));
+    rinseweb_answer:new_text(?ANSWER_TYPE, ?ANSWER_SOURCE, integer_to_binary(Timestamp));
 answer(_Question, [Bin]) ->
     Type = timestamp_unit(Bin),
     Num = binary_to_integer(Bin),
     DateTime = calendar:system_time_to_universal_time(Num, Type),
-    rinseweb_wiz:answer_text(?ANSWER_TYPE, ?ANSWER_SOURCE, format(DateTime)).
+    rinseweb_answer:new_text(?ANSWER_TYPE, ?ANSWER_SOURCE, format(DateTime)).
 
 %%====================================================================
 %% Internal functions

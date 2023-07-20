@@ -20,7 +20,7 @@
 %% API
 %%====================================================================
 
--spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_wiz:answer().
+-spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_answer:answer().
 answer(_Question, [Operator, OperandsBin, _]) ->
     Operands = binary:split(rinseweb_util:binary_trim(OperandsBin), <<" ">>, [trim_all, global]),
     Result = apply_op(parse_operator(Operator), parse_operands(Operands)),
@@ -30,10 +30,10 @@ answer(_Question, [Operator, OperandsBin, _]) ->
 %% Internal functions
 %%====================================================================
 
--spec answer(result() | {error, binary()}) -> rinseweb_wiz:answer().
-answer({error, Reason}) -> rinseweb_wiz:shrug(?ANSWER_SOURCE, Reason);
+-spec answer(result() | {error, binary()}) -> rinseweb_answer:answer().
+answer({error, Reason}) -> rinseweb_answer:new_shrug(?ANSWER_SOURCE, Reason);
 answer(Num) ->
-    rinseweb_wiz:answer_number(?ANSWER_TYPE, ?ANSWER_SOURCE, Num).
+    rinseweb_answer:new_numeric(?ANSWER_TYPE, ?ANSWER_SOURCE, Num).
 
 -spec parse_operator(binary()) -> operator() | {error, binary()}.
 parse_operator(<<"+">>) -> '+';

@@ -15,7 +15,7 @@
 %% API
 %%====================================================================
 
--spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_wiz:answer().
+-spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_answer:answer().
 answer(_Question, [Query]) ->
     search(binary_to_list(Query)).
 
@@ -23,7 +23,7 @@ answer(_Question, [Query]) ->
 %% Internal functions
 %%====================================================================
 
--spec search(string()) -> rinseweb_wiz:answer().
+-spec search(string()) -> rinseweb_answer:answer().
 search(Query) ->
     Items = rinseweb_be_wiki:search(?URL, Query),
     rinseweb_be_wiki:items_to_answer(?SOURCE, Items).

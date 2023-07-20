@@ -38,7 +38,7 @@
 %% API
 %%====================================================================
 
--spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_wiz:answer().
+-spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_answer:answer().
 answer(_Question, [Query]) ->
     search(binary_to_list(Query)).
 
@@ -46,7 +46,7 @@ answer(_Question, [Query]) ->
 %% Internal functions
 %%====================================================================
 
--spec search(string()) -> rinseweb_wiz:answer().
+-spec search(string()) -> rinseweb_answer:answer().
 search(Query) ->
     QueryEncoded = rinseweb_util:url_encode(Query),
     Url = ?URL ++ QueryEncoded,
@@ -54,23 +54,23 @@ search(Query) ->
     Response = httpc:request(get, Req, [], [{body_format, binary}]),
     parse_response(Response).
 
--spec parse_response({ok, {httpc:status_line(), httpc:headers(), binary()}} | {error, term()}) -> rinseweb_wiz:answer().
-parse_response({error, _Reason}) -> rinseweb_wiz:shrug(?SOURCE, <<"Error querying dictionary">>);
+-spec parse_response({ok, {httpc:status_line(), httpc:headers(), binary()}} | {error, term()}) -> rinseweb_answer:answer().
+parse_response({error, _Reason}) -> rinseweb_answer:new_shrug(?SOURCE, <<"Error querying dictionary">>);
 parse_response({ok, {{_Version, 200, _ReasonPhrase}, _Headers, Body}}) ->
     BodyDecoded = jsx:decode(Body, [{return_maps, true}]),
     answer_or_shrug(parse_body(BodyDecoded));
 parse_response({ok, {{_Version, 404, _ReasonPhrase}, _Headers, _Body}}) ->
-    rinseweb_wiz:shrug(?SOURCE, <<"Definition not found">>);
+    rinseweb_answer:new_shrug(?SOURCE, <<"Definition not found">>);
 parse_response({ok, {{_Version, _Status, _ReasonPhrase}, _Headers, _Body}}) ->
-    rinseweb_wiz:shrug(?SOURCE, <<"Error response from dictionary">>).
+    rinseweb_answer:new_shrug(?SOURCE, <<"Error response from dictionary">>).
 
 -spec parse_body(list()) -> [item()].
 parse_body(ListOfItems) ->
     lists:reverse(parse_body(ListOfItems, [])).
 
--spec answer_or_shrug([item()]) -> rinseweb_wiz:answer().
-answer_or_shrug([]) -> rinseweb_wiz:shrug(?SOURCE, <<"Definition not found">>);
-answer_or_shrug(ParsedItems) -> rinseweb_wiz:answer(?TYPE, ?SOURCE, ParsedItems).
+-spec answer_or_shrug([item()]) -> rinseweb_answer:answer().
+answer_or_shrug([]) -> rinseweb_answer:new_shrug(?SOURCE, <<"Definition not found">>);
+answer_or_shrug(ParsedItems) -> rinseweb_answer:new(?TYPE, ?SOURCE, ParsedItems).
 
 -spec parse_body(list(), [item()]) -> [item()].
 parse_body([], Acc) -> Acc;

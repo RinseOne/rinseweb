@@ -12,10 +12,6 @@
 %% API
 %%====================================================================
 
--spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_wiz:answer().
+-spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_answer:answer().
 answer(_Question, _Args) ->
-    #{
-        type => shrug,
-        source => default,
-        answer => <<"Unrecognized command">>
-    }.
+    rinseweb_answer:new_shrug(default, <<"Unrecognized command">>).

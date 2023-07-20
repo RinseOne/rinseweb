@@ -15,7 +15,7 @@
 %% API
 %%====================================================================
 
--spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_wiz:answer().
+-spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_answer:answer().
 answer(_Question, [<<"sha">>, Bin]) ->
     Hash = format(crypto:hash(sha, Bin)),
     answer(Hash);
@@ -31,10 +31,10 @@ answer(_Question, [<<"md5">>, Bin]) ->
 %% Internal functions
 %%====================================================================
 
--spec answer(binary()) -> rinseweb_wiz:answer().
+-spec answer(binary()) -> rinseweb_answer:answer().
 answer(Hash) ->
     AnswerCustom = answer_custom(Hash),
-    rinseweb_wiz:answer(?ANSWER_TYPE, ?ANSWER_SOURCE, AnswerCustom).
+    rinseweb_answer:new(?ANSWER_TYPE, ?ANSWER_SOURCE, AnswerCustom).
 
 -spec format(binary()) -> binary().
 format(Bin) ->
