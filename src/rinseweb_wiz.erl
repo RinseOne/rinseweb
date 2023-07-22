@@ -12,7 +12,7 @@
 %% Types
 -type result() :: #{
     question := binary(),
-    answers := [rinseweb_answer:answer()]
+    answers := rinseweb_answer:answers()
 }.
 -type question() :: binary().
 -type req() :: #{

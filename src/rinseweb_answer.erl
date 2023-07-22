@@ -20,7 +20,9 @@
 -type type() :: conversion_result | definition | hash | number | redirect | shrug | text | wiki.
 -type source() :: atom().
 -type result() :: any().
+-type answers() :: [answer()].
 
+-export_type([answers/0]).
 -export_type([source/0]).
 
 %%====================================================================
