@@ -15,9 +15,6 @@
     answers := rinseweb_answer:answers()
 }.
 -type question() :: binary().
--type req() :: #{
-    client_ip := binary()
-}.
 -type args() :: [any()].
 
 -export_type([question/0]).
@@ -31,7 +28,7 @@
 answer(Question) ->
     answer(Question, #{client_ip => <<>>}).
 
--spec answer(question(), req()) -> result().
+-spec answer(question(), rinseweb_req:req()) -> result().
 answer(Question, Req) ->
     TrimmedQuestion = binary_max_size(rinseweb_util:binary_trim(Question), 128),
     {Manifest, Args} = find_handler(TrimmedQuestion, rinseweb_manifests:get_all()),

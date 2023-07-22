@@ -28,7 +28,7 @@ content_types_provided(Req, State) ->
 
 answer_to_html(Req, State) ->
     Question = cowboy_req:binding(question, Req, <<>>),
-    Result = rinseweb_wiz:answer(Question),
+    Result = rinseweb_wiz:answer(Question, rinseweb_req:new_from_cowboy_req(Req)),
     AnswerBin = result_to_binary(Result),
     QuestionSafe = htmlentities(Question),
     AnswerSafe = htmlentities(AnswerBin),
@@ -58,13 +58,13 @@ answer_to_html(Req, State) ->
 
 answer_to_json(Req, State) ->
     Question = cowboy_req:binding(question, Req, <<>>),
-    Answer = rinseweb_wiz:answer(Question),
+    Answer = rinseweb_wiz:answer(Question, rinseweb_req:new_from_cowboy_req(Req)),
     AnswerBin = jsx:encode(Answer),
     {AnswerBin, Req, State}.
 
 answer_to_text(Req, State) ->
     Question = cowboy_req:binding(question, Req, <<>>),
-    Result = rinseweb_wiz:answer(Question),
+    Result = rinseweb_wiz:answer(Question, rinseweb_req:new_from_cowboy_req(Req)),
     AnswerBin = result_to_binary(Result),
     {AnswerBin, Req, State}.
 
