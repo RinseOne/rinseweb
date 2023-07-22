@@ -39,7 +39,7 @@ end_per_testcase(_, _Config) ->
 
 query(_) ->
     Question = <<"define hello">>,
-    Answer = rinseweb_wiz_dictionaryapi:answer(Question, [<<"hello">>]),
+    Answer = rinseweb_wiz_dictionaryapi:answer(Question, [<<"hello">>], #{}),
     definition = maps:get(type, Answer),
     definition = maps:get(source, Answer),
     AnswerCustom = maps:get(answer, Answer),

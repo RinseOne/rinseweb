@@ -86,7 +86,7 @@ unit_coverage(_) ->
     ],
     F = fun({UnitNum, UnitFrom, UnitTo, ExpectedAnswer}, Acc) ->
             Question = <<"convert ", UnitNum/binary, UnitFrom/binary, " to ", UnitTo/binary>>,
-            ExpectedAnswer = rinseweb_wiz_convert:answer(Question, [UnitNum, UnitFrom, UnitTo]),
+            ExpectedAnswer = rinseweb_wiz_convert:answer(Question, [UnitNum, UnitFrom, UnitTo], #{}),
             Acc
         end,
     ok = lists:foldl(F, ok, TestCases).
@@ -104,7 +104,7 @@ unit_invalid(_) ->
     F = fun({UnitFrom, UnitTo, ErrorReason}, Acc) ->
             Question = <<"convert ", UnitNum/binary, UnitFrom/binary, " to ", UnitTo/binary>>,
             ExpectedAnswer = rinseweb_answer:new_shrug(convert, ErrorReason),
-            ExpectedAnswer = rinseweb_wiz_convert:answer(Question, [UnitNum, UnitFrom, UnitTo]),
+            ExpectedAnswer = rinseweb_wiz_convert:answer(Question, [UnitNum, UnitFrom, UnitTo], #{}),
             Acc
         end,
     ok = lists:foldl(F, ok, TestCases).

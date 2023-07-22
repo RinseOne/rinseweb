@@ -6,7 +6,7 @@
 -module(rinseweb_wiz_timestamp).
 
 %% API
--export([answer/2]).
+-export([answer/3]).
 
 %% Types
 -type time_unit() :: second | millisecond.
@@ -18,11 +18,11 @@
 %% API
 %%====================================================================
 
--spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_answer:answer().
-answer(_Question, []) ->
+-spec answer(rinseweb_wiz:question(), [any()], rinseweb_req:req()) -> rinseweb_answer:answer().
+answer(_Question, [], _) ->
     Timestamp = erlang:system_time(second),
     rinseweb_answer:new_text(?ANSWER_TYPE, ?ANSWER_SOURCE, integer_to_binary(Timestamp));
-answer(_Question, [Bin]) ->
+answer(_Question, [Bin], _) ->
     Type = timestamp_unit(Bin),
     Num = binary_to_integer(Bin),
     DateTime = calendar:system_time_to_universal_time(Num, Type),

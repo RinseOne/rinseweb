@@ -32,7 +32,7 @@ answer(Question) ->
 answer(Question, Req) ->
     TrimmedQuestion = binary_max_size(rinseweb_util:binary_trim(Question), 128),
     {Manifest, Args} = find_handler(TrimmedQuestion, rinseweb_manifests:get_all()),
-    Answer = handler_answer(Manifest, TrimmedQuestion, Args),
+    Answer = handler_answer(Manifest, TrimmedQuestion, Args, Req),
     Answers = [Answer],
     #{
         question => TrimmedQuestion,
@@ -71,18 +71,18 @@ find_handler_check_result({match, Manifest, Args}, _Question, _Rest) ->
 find_handler_check_result(nomatch, Question, Rest) ->
     find_handler(Question, Rest).
 
--spec handler_answer(rinseweb_manifests:manifest(), question(), args()) -> rinseweb_answer:answer().
-handler_answer(#{handler := Handler, cache := _CacheOptions}, Question, Args) ->
+-spec handler_answer(rinseweb_manifests:manifest(), question(), args(), rinseweb_req:req()) -> rinseweb_answer:answer().
+handler_answer(#{handler := Handler, cache := _CacheOptions}, Question, Args, Req) ->
     case rinseweb_cache:get(Handler, Question) of
         undefined ->
-            Answer = Handler:answer(Question, Args),
+            Answer = Handler:answer(Question, Args, Req),
             ok = rinseweb_cache:put(Handler, Question, Answer),
             Answer;
         Answer ->
             Answer
     end;
-handler_answer(#{handler := Handler}, Question, Args) ->
-    Handler:answer(Question, Args).
+handler_answer(#{handler := Handler}, Question, Args, Req) ->
+    Handler:answer(Question, Args, Req).
 
 -spec binary_max_size(binary(), pos_integer()) -> binary().
 binary_max_size(Bin, Size) when byte_size(Bin) =< Size -> Bin;

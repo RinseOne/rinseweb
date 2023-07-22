@@ -65,7 +65,7 @@ ddg(_) ->
     Query = <<"hello">>,
     Question = <<Command/binary, " ", Query/binary>>,
     ExpectedAnswer = result(Query, <<"DuckDuckGo">>, <<"https://duckduckgo.com/?t=rinseone&q=", Query/binary>>),
-    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query]),
+    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query], #{}),
     ExpectedAnswer = Answer,
     ok.
 
@@ -74,7 +74,7 @@ ddgi(_) ->
     Query = <<"hello">>,
     Question = <<Command/binary, " ", Query/binary>>,
     ExpectedAnswer = result(Query, <<"DuckDuckGo images">>, <<"https://duckduckgo.com/?t=rinseone&iax=images&ia=images&q=", Query/binary>>),
-    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query]),
+    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query], #{}),
     ExpectedAnswer = Answer,
     ok.
 
@@ -83,7 +83,7 @@ ddgv(_) ->
     Query = <<"hello">>,
     Question = <<Command/binary, " ", Query/binary>>,
     ExpectedAnswer = result(Query, <<"DuckDuckGo videos">>, <<"https://duckduckgo.com/?t=rinseone&iax=videos&ia=videos&q=", Query/binary>>),
-    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query]),
+    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query], #{}),
     ExpectedAnswer = Answer,
     ok.
 
@@ -92,7 +92,7 @@ ddgn(_) ->
     Query = <<"hello">>,
     Question = <<Command/binary, " ", Query/binary>>,
     ExpectedAnswer = result(Query, <<"DuckDuckGo news">>, <<"https://duckduckgo.com/?t=rinseone&iar=news&ia=news&q=", Query/binary>>),
-    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query]),
+    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query], #{}),
     ExpectedAnswer = Answer,
     ok.
 
@@ -101,6 +101,6 @@ ddgm(_) ->
     Query = <<"hello">>,
     Question = <<Command/binary, " ", Query/binary>>,
     ExpectedAnswer = result(Query, <<"DuckDuckGo maps">>, <<"https://duckduckgo.com/?t=rinseone&ia=news&iaxm=places&q=", Query/binary>>),
-    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query]),
+    Answer = rinseweb_wiz_redirect:answer(Question, [Command, Query], #{}),
     ExpectedAnswer = Answer,
     ok.

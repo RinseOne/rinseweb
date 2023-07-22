@@ -6,7 +6,7 @@
 -module(rinseweb_wiz_convert).
 
 %% API
--export([answer/2]).
+-export([answer/3]).
 
 %% Types
 -type unit_or_unknown() :: binary() | {unknown, binary()}.
@@ -20,8 +20,8 @@
 %% API
 %%====================================================================
 
--spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_answer:answer().
-answer(_Question, [FromNumBin, FromUnitBin, ToUnitBin]) ->
+-spec answer(rinseweb_wiz:question(), [any()], rinseweb_req:req()) -> rinseweb_answer:answer().
+answer(_Question, [FromNumBin, FromUnitBin, ToUnitBin], _) ->
     FromUnit = binary_to_canonical_unit(FromUnitBin),
     ToUnit = binary_to_canonical_unit(ToUnitBin),
     answer_using_canonical_units(FromNumBin, FromUnit, ToUnit).

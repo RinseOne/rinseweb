@@ -6,7 +6,7 @@
 -module(rinseweb_wiz_dictionaryapi).
 
 %% API
--export([answer/2]).
+-export([answer/3]).
 
 %% Types
 -type item() :: #{
@@ -38,8 +38,8 @@
 %% API
 %%====================================================================
 
--spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_answer:answer().
-answer(_Question, [Query]) ->
+-spec answer(rinseweb_wiz:question(), [any()], rinseweb_req:req()) -> rinseweb_answer:answer().
+answer(_Question, [Query], _) ->
     search(binary_to_list(Query)).
 
 %%====================================================================

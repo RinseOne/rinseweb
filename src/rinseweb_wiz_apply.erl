@@ -6,7 +6,7 @@
 -module(rinseweb_wiz_apply).
 
 %% API
--export([answer/2]).
+-export([answer/3]).
 
 %% Types
 -type operator() :: atom().
@@ -20,8 +20,8 @@
 %% API
 %%====================================================================
 
--spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_answer:answer().
-answer(_Question, [Operator, OperandsBin, _]) ->
+-spec answer(rinseweb_wiz:question(), [any()], rinseweb_req:req()) -> rinseweb_answer:answer().
+answer(_Question, [Operator, OperandsBin, _], _) ->
     Operands = binary:split(rinseweb_util:binary_trim(OperandsBin), <<" ">>, [trim_all, global]),
     Result = apply_op(parse_operator(Operator), parse_operands(Operands)),
     answer(Result).
