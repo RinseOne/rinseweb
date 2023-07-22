@@ -19,7 +19,6 @@ new_from_cowboy_req(#{peer := {PeerIpAddress, _}} = Req) ->
     %% by default load balancer will append (actually prepend) the client IP it sees to the
     %% X-Forwarded-For header. Here we'll check if that header exists, we'll grab the first IP from it.
     %% Otherwise, we'll fall back to Cowboy's reported peer IP.
-    io:format("cowboy_req is: ~p", [Req]),
     XForwardedFor = cowboy_req:header(<<"x-forwarded-for">>, Req, <<>>),
     new(parse_forwarded_ip(XForwardedFor, PeerIpAddress)).
 
