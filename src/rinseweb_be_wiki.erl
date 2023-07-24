@@ -41,9 +41,7 @@ items_to_answer(Source, Items) -> rinseweb_wiz:answer(?TYPE, Source, Items).
 %% Internal functions
 %%====================================================================
 
--type httpc_status_line() :: {uri_string:uri_string(), non_neg_integer(), string()}.
--type httpc_http_header() :: {[byte()], binary() | iolist()}.
--spec parse_response({ok, {httpc_status_line(), [httpc_http_header()], binary()}} | {error, term()}) ->
+-spec parse_response({ok, {rinseweb_util:httpc_status_line(), [rinseweb_util:httpc_http_header()], binary()}} | {error, term()}) ->
     {ok, [item()]} | {error, non_neg_integer(), string()}.
 parse_response({error, Reason}) ->
     {error, 0, Reason};

@@ -15,6 +15,11 @@
 
 %% Types
 -type encode_string() :: binary() | string().
+-type httpc_status_line() :: {uri_string:uri_string(), non_neg_integer(), string()}.
+-type httpc_http_header() :: {[byte()], binary() | iolist()}.
+
+-export_type([httpc_status_line/0]).
+-export_type([httpc_http_header/0]).
 
 %%====================================================================
 %% API
