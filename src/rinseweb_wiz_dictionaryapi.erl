@@ -54,7 +54,7 @@ search(Query) ->
     Response = httpc:request(get, Req, [], [{body_format, binary}]),
     parse_response(Response).
 
--spec parse_response({ok, {httpc:status_line(), httpc:headers(), binary()}} | {error, term()}) -> rinseweb_wiz:answer().
+-spec parse_response({ok, {rinseweb_util:httpc_status_line(), [rinseweb_util:httpc_http_header()], binary()}} | {error, term()}) -> rinseweb_wiz:answer().
 parse_response({error, _Reason}) -> rinseweb_wiz:shrug(?SOURCE, <<"Error querying dictionary">>);
 parse_response({ok, {{_Version, 200, _ReasonPhrase}, _Headers, Body}}) ->
     BodyDecoded = jsx:decode(Body, [{return_maps, true}]),
