@@ -4,6 +4,7 @@
 -export([base_uri/0]).
 -export([question_uri/1]).
 -export([request_json/1]).
+-export([request_json/2]).
 -export([decode_response_body/1]).
 
 %%====================================================================
@@ -18,7 +19,11 @@ question_uri(Question) ->
      base_uri() ++ "/answer/" ++ edoc_lib:escape_uri(Question).
 
 request_json(Question) ->
-    Request = {question_uri(Question), [{"Accept", "application/json"}]},
+    request_json(Question, []).
+
+request_json(Question, ExtraHeaders) ->
+    Headers = [{"Accept", "application/json"}|ExtraHeaders],
+    Request = {question_uri(Question), Headers},
     httpc:request(get, Request, [], []).
 
 decode_response_body(ResponseBody) ->
