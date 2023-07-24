@@ -24,7 +24,7 @@
 %% API
 %%====================================================================
 
--spec search(string(), string()) -> rinseweb_wiz:answer().
+-spec search(string(), string()) -> [item()].
 search(BaseUri, Query) ->
     QueryEncoded = rinseweb_util:url_encode(Query),
     Url = BaseUri ++ QueryEncoded,
