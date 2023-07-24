@@ -1,6 +1,7 @@
 # rinseweb
 
-![CircleCI](https://img.shields.io/circleci/build/github/RinseOne/rinseweb?style=for-the-badge)
+![Test](https://img.shields.io/github/actions/workflow/status/RinseOne/rinseweb/test.yml?label=Test&style=for-the-badge)
+![Release](https://img.shields.io/github/actions/workflow/status/RinseOne/rinseweb/release.yml?label=Release&style=for-the-badge)
 ![GitHub](https://img.shields.io/github/license/RinseOne/rinseweb?style=for-the-badge)
 
 Web application for providing answers using configured backends written in Erlang/OTP.
