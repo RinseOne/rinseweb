@@ -12,7 +12,7 @@
 
 %% Types
 -type options() :: #{
-    type => ets:type(),                % set | ordered_set | bag | duplicate_bag
+    type => ets:table_type(),          % set | ordered_set | bag | duplicate_bag
     n => pos_integer(),                % number of cache segments, default is 10
     ttl => pos_integer(),              % time to live of cached items in seconds, default is 600
     size => pos_integer(),             % number of items to store in cache

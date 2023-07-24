@@ -33,7 +33,7 @@ search(BaseUri, Query) ->
     {ok, Items} = parse_response(Response),
     Items.
 
--spec items_to_answer(rinseweb_wiz:answer_source(), [item()]) -> rinseweb_wiz:anwer().
+-spec items_to_answer(rinseweb_wiz:answer_source(), [item()]) -> rinseweb_wiz:answer().
 items_to_answer(Source, []) -> rinseweb_wiz:shrug(Source, <<"No results">>);
 items_to_answer(Source, Items) -> rinseweb_wiz:answer(?TYPE, Source, Items).
 
@@ -41,7 +41,9 @@ items_to_answer(Source, Items) -> rinseweb_wiz:answer(?TYPE, Source, Items).
 %% Internal functions
 %%====================================================================
 
--spec parse_response({ok, {httpc:status_line(), httpc:headers(), binary()}} | {error, term()}) ->
+-type httpc_status_line() :: {uri_string:uri_string(), non_neg_integer(), string()}.
+-type httpc_http_header() :: {[byte()], binary() | iolist()}.
+-spec parse_response({ok, {httpc_status_line(), [httpc_http_header()], binary()}} | {error, term()}) ->
     {ok, [item()]} | {error, non_neg_integer(), string()}.
 parse_response({error, Reason}) ->
     {error, 0, Reason};
