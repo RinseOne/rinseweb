@@ -9,7 +9,7 @@ Web application for providing answers using configured backends written in Erlan
 ## Prerequisites
 
 * GNU make
-* Erlang/OTP
+* Erlang/OTP (>= 25)
 * [GNU units](https://www.gnu.org/software/units/) `units` executable in path
 
 ## Run
