@@ -13,6 +13,12 @@
     client_ip := inet:ip_address()
 }.
 
+-export_type([req/0]).
+
+%%====================================================================
+%% API
+%%====================================================================
+
 -spec new_from_cowboy_req(cowboy_req:req()) -> req().
 new_from_cowboy_req(#{peer := {PeerIpAddress, _}} = Req) ->
     %% Per AWS docs https://docs.aws.amazon.com/elasticloadbalancing/latest/application/x-forwarded-headers.html
