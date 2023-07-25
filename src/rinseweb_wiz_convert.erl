@@ -6,7 +6,7 @@
 -module(rinseweb_wiz_convert).
 
 %% API
--export([answer/2]).
+-export([answer/3]).
 
 %% Types
 -type unit_or_unknown() :: binary() | {unknown, binary()}.
@@ -20,8 +20,8 @@
 %% API
 %%====================================================================
 
--spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_wiz:answer().
-answer(_Question, [FromNumBin, FromUnitBin, ToUnitBin]) ->
+-spec answer(rinseweb_wiz:question(), [any()], rinseweb_req:req()) -> rinseweb_answer:answer().
+answer(_Question, [FromNumBin, FromUnitBin, ToUnitBin], _) ->
     FromUnit = binary_to_canonical_unit(FromUnitBin),
     ToUnit = binary_to_canonical_unit(ToUnitBin),
     answer_using_canonical_units(FromNumBin, FromUnit, ToUnit).
@@ -30,16 +30,16 @@ answer(_Question, [FromNumBin, FromUnitBin, ToUnitBin]) ->
 %% Internal functions
 %%====================================================================
 
--spec answer_using_canonical_units(binary(), unit_or_unknown(), unit_or_unknown()) -> rinseweb_wiz:answer().
-answer_using_canonical_units(_, {unknown, Unit}, _) -> rinseweb_wiz:shrug(?ANSWER_SOURCE, <<"Unknown unit '", Unit/binary, "'">>);
-answer_using_canonical_units(_, _, {unknown, Unit}) -> rinseweb_wiz:shrug(?ANSWER_SOURCE, <<"Unknown unit '", Unit/binary, "'">>);
+-spec answer_using_canonical_units(binary(), unit_or_unknown(), unit_or_unknown()) -> rinseweb_answer:answer().
+answer_using_canonical_units(_, {unknown, Unit}, _) -> rinseweb_answer:new_shrug(?ANSWER_SOURCE, <<"Unknown unit '", Unit/binary, "'">>);
+answer_using_canonical_units(_, _, {unknown, Unit}) -> rinseweb_answer:new_shrug(?ANSWER_SOURCE, <<"Unknown unit '", Unit/binary, "'">>);
 answer_using_canonical_units(FromNumBin, FromUnit, ToUnit) ->
     FromNum = rinseweb_util:round_precise(rinseweb_util:binary_to_number(FromNumBin)),
     ConversionResult = convert(FromNum, FromUnit, ToUnit),
     answer_conversion_result(FromNum, FromUnit, ToUnit, ConversionResult).
 
--spec answer_conversion_result(number(), unit(), unit(), {error, binary()} | number()) -> rinseweb_wiz:answer().
-answer_conversion_result(_, _, _, {error, Error}) -> rinseweb_wiz:shrug(?ANSWER_SOURCE, Error);
+-spec answer_conversion_result(number(), unit(), unit(), {error, binary()} | number()) -> rinseweb_answer:answer().
+answer_conversion_result(_, _, _, {error, Error}) -> rinseweb_answer:new_shrug(?ANSWER_SOURCE, Error);
 answer_conversion_result(FromNum, FromUnit, ToUnit, ToNum) ->
     AnswerCustom = #{
         unit_from_name => FromUnit,
@@ -47,7 +47,7 @@ answer_conversion_result(FromNum, FromUnit, ToUnit, ToNum) ->
         unit_to_name => ToUnit,
         unit_to_number => rinseweb_util:round_precise(ToNum)
     },
-    rinseweb_wiz:answer(?ANSWER_TYPE, ?ANSWER_SOURCE, AnswerCustom).
+    rinseweb_answer:new(?ANSWER_TYPE, ?ANSWER_SOURCE, AnswerCustom).
 
 -spec convert(number(), unit(), unit()) -> number() | {error, binary()}.
 convert(Num, FromUnit, ToUnit) ->

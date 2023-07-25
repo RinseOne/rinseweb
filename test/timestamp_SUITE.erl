@@ -57,14 +57,14 @@ result(Text) ->
 seconds(_) ->
     Question = <<"1624433430">>,
     ExpectedAnswer = result(<<"2021-06-23 07:30:30 UTC">>),
-    Answer = rinseweb_wiz_timestamp:answer(Question, [<<"1624433430">>]),
+    Answer = rinseweb_wiz_timestamp:answer(Question, [<<"1624433430">>], #{}),
     ExpectedAnswer = Answer,
     ok.
 
 milliseconds(_) ->
     Question = <<"1624433430000">>,
     ExpectedAnswer = result(<<"2021-06-23 07:30:30 UTC">>),
-    Answer = rinseweb_wiz_timestamp:answer(Question, [<<"1624433430">>]),
+    Answer = rinseweb_wiz_timestamp:answer(Question, [<<"1624433430">>], #{}),
     ExpectedAnswer = Answer,
     ok.
 
@@ -72,7 +72,7 @@ timestamp(_) ->
     TestStartTime = erlang:system_time(second),
     Questions = [<<"now">>, <<"timestamp">>, <<"unix timestamp">>],
     F = fun (Question, Acc) ->
-            Answer = rinseweb_wiz_timestamp:answer(Question, []),
+            Answer = rinseweb_wiz_timestamp:answer(Question, [], #{}),
             AnswerType = maps:get(type, Answer),
             text = AnswerType,
             AnswerSource = maps:get(source, Answer),

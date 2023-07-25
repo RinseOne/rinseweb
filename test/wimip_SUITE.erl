@@ -1,4 +1,4 @@
--module(dicrionaryapi_SUITE).
+-module(wimip_SUITE).
 
 -include_lib("common_test/include/ct.hrl").
 
@@ -10,7 +10,8 @@
 -export([end_per_testcase/2]).
 
 %% Tests
--export([query/1]).
+-export([ipv4/1]).
+-export([ipv6/1]).
 
 %% ============================================================================
 %% ct functions
@@ -18,7 +19,8 @@
 
 all() ->
     [
-        query
+        ipv4,
+        ipv6
     ].
 
 init_per_suite(Config) ->
@@ -37,15 +39,16 @@ end_per_testcase(_, _Config) ->
 %% Tests
 %% ============================================================================
 
-query(_) ->
-    Question = <<"define hello">>,
-    Answer = rinseweb_wiz_dictionaryapi:answer(Question, [<<"hello">>], #{}),
-    definition = maps:get(type, Answer),
-    definition = maps:get(source, Answer),
-    AnswerCustom = maps:get(answer, Answer),
-    true = is_list(AnswerCustom),
-    true = length(AnswerCustom) > 0,
-    [FirstItem|_] = AnswerCustom,
-    true = maps:is_key(word, FirstItem),
-    true = maps:is_key(phonetics, FirstItem),
-    true = maps:is_key(meanings, FirstItem).
+ipv4(_) ->
+    Question = <<"wimip">>,
+    Answer = rinseweb_wiz_wimip:answer(Question, [], #{client_ip => {127, 0, 0, 1}}),
+    text = maps:get(type, Answer),
+    wimip = maps:get(source, Answer),
+    <<"127.0.0.1">> = maps:get(text, maps:get(answer, Answer)).
+
+ipv6(_) ->
+    Question = <<"wimip">>,
+    Answer = rinseweb_wiz_wimip:answer(Question, [], #{client_ip => {8193, 3512, 0, 0, 0, 0, 2, 1}}),
+    text = maps:get(type, Answer),
+    wimip = maps:get(source, Answer),
+    <<"2001:db8::2:1">> = maps:get(text, maps:get(answer, Answer)).

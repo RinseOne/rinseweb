@@ -6,31 +6,16 @@
 -module(rinseweb_wiz).
 
 %% API
--export([answer/1]).
--export([answer/3]).
--export([answer_number/3]).
--export([answer_text/3]).
--export([shrug/2]).
+-export([answer/2]).
 
 %% Types
 -type result() :: #{
     question := binary(),
-    answers := answers()
+    answers := rinseweb_answer:answers()
 }.
 -type question() :: binary().
--type answers() :: [answer()].
--type answer() :: #{
-    type := answer_type(),
-    source := answer_source(),
-    answer => answer_custom()
-}.
--type answer_type() :: conversion_result | definition | hash | number | redirect | shrug | text | wiki.
--type answer_source() :: atom().
--type answer_custom() :: any().
 -type args() :: [any()].
 
--export_type([answer/0]).
--export_type([answer_source/0]).
 -export_type([question/0]).
 -export_type([result/0]).
 
@@ -38,45 +23,15 @@
 %% API
 %%====================================================================
 
--spec answer(question()) -> result().
-answer(Question) ->
+-spec answer(question(), rinseweb_req:req()) -> result().
+answer(Question, Req) ->
     TrimmedQuestion = binary_max_size(rinseweb_util:binary_trim(Question), 128),
     {Manifest, Args} = find_handler(TrimmedQuestion, rinseweb_manifests:get_all()),
-    Answer = handler_answer(Manifest, TrimmedQuestion, Args),
+    Answer = handler_answer(Manifest, TrimmedQuestion, Args, Req),
     Answers = [Answer],
     #{
         question => TrimmedQuestion,
         answers => Answers
-    }.
-
--spec answer(answer_type(), answer_source(), answer_custom()) -> answer().
-answer(Type, Source, Custom) ->
-    #{
-        type => Type,
-        source => Source,
-        answer => Custom
-    }.
-
--spec answer_text(answer_type(), answer_source(), binary()) -> answer().
-answer_text(Type, Source, Bin) ->
-    AnswerCustom = #{
-        text => Bin
-    },
-    answer(Type, Source, AnswerCustom).
-
--spec answer_number(answer_type(), answer_source(), number()) -> answer().
-answer_number(Type, Source, Num) ->
-    AnswerCustom = #{
-        number => Num
-    },
-    answer(Type, Source, AnswerCustom).
-
--spec shrug(answer_source(), binary()) -> answer().
-shrug(Source, Text) ->
-    #{
-        type => shrug,
-        source => Source,
-        answer => Text
     }.
 
 %%====================================================================
@@ -111,18 +66,18 @@ find_handler_check_result({match, Manifest, Args}, _Question, _Rest) ->
 find_handler_check_result(nomatch, Question, Rest) ->
     find_handler(Question, Rest).
 
--spec handler_answer(rinseweb_manifests:manifest(), question(), args()) -> answer().
-handler_answer(#{handler := Handler, cache := _CacheOptions}, Question, Args) ->
+-spec handler_answer(rinseweb_manifests:manifest(), question(), args(), rinseweb_req:req()) -> rinseweb_answer:answer().
+handler_answer(#{handler := Handler, cache := _CacheOptions}, Question, Args, Req) ->
     case rinseweb_cache:get(Handler, Question) of
         undefined ->
-            Answer = Handler:answer(Question, Args),
+            Answer = Handler:answer(Question, Args, Req),
             ok = rinseweb_cache:put(Handler, Question, Answer),
             Answer;
         Answer ->
             Answer
     end;
-handler_answer(#{handler := Handler}, Question, Args) ->
-    Handler:answer(Question, Args).
+handler_answer(#{handler := Handler}, Question, Args, Req) ->
+    Handler:answer(Question, Args, Req).
 
 -spec binary_max_size(binary(), pos_integer()) -> binary().
 binary_max_size(Bin, Size) when byte_size(Bin) =< Size -> Bin;

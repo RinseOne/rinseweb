@@ -6,7 +6,7 @@
 -module(rinseweb_wiz_redirect).
 
 %% API
--export([answer/2]).
+-export([answer/3]).
 
 %% Types
 -type answer() :: #{
@@ -27,12 +27,12 @@
 %% API
 %%====================================================================
 
--spec answer(rinseweb_wiz:question(), [any()]) -> rinseweb_wiz:answer().
-answer(_Question, [Command, Query]) ->
+-spec answer(rinseweb_wiz:question(), [any()], rinseweb_req:req()) -> rinseweb_answer:answer().
+answer(_Question, [Command, Query], _) ->
     QueryEncoded = rinseweb_util:url_encode(Query),
     {BaseUrl, Source} = command_to_url_and_source(Command),
     Url = <<BaseUrl/binary, QueryEncoded/binary>>,
-    rinseweb_wiz:answer(?ANSWER_TYPE, ?ANSWER_SOURCE, create_answer(Url, Source, Query)).
+    rinseweb_answer:new(?ANSWER_TYPE, ?ANSWER_SOURCE, create_answer(Url, Source, Query)).
 
 %%====================================================================
 %% Internal functions
