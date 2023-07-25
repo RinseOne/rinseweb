@@ -6,7 +6,6 @@
 -module(rinseweb_wiz).
 
 %% API
--export([answer/1]).
 -export([answer/2]).
 
 %% Types
@@ -23,10 +22,6 @@
 %%====================================================================
 %% API
 %%====================================================================
-
--spec answer(question()) -> result().
-answer(Question) ->
-    answer(Question, #{client_ip => <<>>}).
 
 -spec answer(question(), rinseweb_req:req()) -> result().
 answer(Question, Req) ->

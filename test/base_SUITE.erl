@@ -50,6 +50,6 @@ max_question_length(_) ->
             }
         ]
     },
-    Answer = rinseweb_wiz:answer(QuestionLong),
+    Answer = rinseweb_wiz:answer(QuestionLong, #{}),
     ExpectedAnswer = Answer,
     ok.
