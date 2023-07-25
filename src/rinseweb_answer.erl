@@ -22,6 +22,7 @@
 -type result() :: any().
 -type answers() :: [answer()].
 
+-export_type([answer/0]).
 -export_type([answers/0]).
 -export_type([source/0]).
 
