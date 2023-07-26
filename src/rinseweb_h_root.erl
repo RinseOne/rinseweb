@@ -52,10 +52,12 @@ hello_to_html(Req, State) ->
                 <option value=\"ddgv \"/>
                 <option value=\"define \"/>
                 <option value=\"md5 \"/>
-                <option value=\"now \"/>
+                <option value=\"now\"/>
                 <option value=\"sha \"/>
                 <option value=\"sha2 \"/>
                 <option value=\"uuid\"/>
+                <option value=\"what is my ip\"/>
+                <option value=\"what is my user agent\"/>
                 <option value=\"wiki \"/>
                 <option value=\"how to \"/>
             </datalist>

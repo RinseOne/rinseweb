@@ -138,10 +138,10 @@ get_all() ->
             matches => [
                 #{
                     type => regex,
-                    value => <<"^(?i:what is my ip|wimip)$">>
+                    value => <<"^(?i:wimip|wimua|(what is my)\\s+(ip|user agent))$">>
                 }
             ],
-            handler => rinseweb_wiz_wimip
+            handler => rinseweb_wiz_whatismy
         },
         #{ % operators
             matches => [

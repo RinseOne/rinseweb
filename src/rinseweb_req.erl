@@ -10,7 +10,8 @@
 
 %% Types
 -type req() :: #{
-    client_ip := inet:ip_address()
+    client_ip := inet:ip_address(),
+    user_agent := binary()
 }.
 
 -export_type([req/0]).
@@ -26,16 +27,18 @@ new_from_cowboy_req(#{peer := {PeerIpAddress, _}} = Req) ->
     %% X-Forwarded-For header. Here we'll check if that header exists, we'll grab the first IP from it.
     %% Otherwise, we'll fall back to Cowboy's reported peer IP.
     XForwardedFor = cowboy_req:header(<<"x-forwarded-for">>, Req, <<>>),
-    new(parse_forwarded_ip(XForwardedFor, PeerIpAddress)).
+    UserAgent = cowboy_req:header(<<"user-agent">>, Req, <<>>),
+    new(parse_forwarded_ip(XForwardedFor, PeerIpAddress), UserAgent).
 
 %%====================================================================
 %% Internal functions
 %%====================================================================
 
--spec new(inet:ip_address()) -> req().
-new(IpAddress) ->
+-spec new(inet:ip_address(), binary()) -> req().
+new(ClientIp, UserAgent) ->
     #{
-        client_ip => IpAddress
+        client_ip => ClientIp,
+        user_agent => UserAgent
     }.
 
 -spec parse_forwarded_ip(binary(), inet:ip_address()) -> inet:ip_address().
