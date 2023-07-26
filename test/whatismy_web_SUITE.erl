@@ -1,4 +1,4 @@
--module(wimip_web_SUITE).
+-module(whatismy_web_SUITE).
 
 -include_lib("common_test/include/ct.hrl").
 
@@ -10,10 +10,14 @@
 -export([end_per_testcase/2]).
 
 %% Tests
--export([simple/1]).
--export([x_forwarded_for_empty/1]).
--export([x_forwarded_for_ipv4/1]).
--export([x_forwarded_for_ipv6/1]).
+-export([ip_short/1]).
+-export([ip_long/1]).
+-export([ip_x_forwarded_for_empty/1]).
+-export([ip_x_forwarded_for_ipv4/1]).
+-export([ip_x_forwarded_for_ipv6/1]).
+-export([ua_none/1]).
+-export([ua_short/1]).
+-export([ua_long/1]).
 
 %% ============================================================================
 %% ct functions
@@ -21,10 +25,14 @@
 
 all() ->
     [
-        simple,
-        x_forwarded_for_empty,
-        x_forwarded_for_ipv4,
-        x_forwarded_for_ipv6
+        ip_short,
+        ip_long,
+        ip_x_forwarded_for_empty,
+        ip_x_forwarded_for_ipv4,
+        ip_x_forwarded_for_ipv6,
+        ua_none,
+        ua_short,
+        ua_long
     ].
 
 init_per_suite(Config) ->
@@ -44,7 +52,7 @@ end_per_testcase(_, _Config) ->
 %% Tests
 %% ============================================================================
 
-simple(_) ->
+ip_short(_) ->
     Answer = rinseweb_test:request_and_decode_answer("wimip"),
     <<"text">> = maps:get(<<"type">>, Answer),
     IpAddressBin = maps:get(<<"text">>, maps:get(<<"answer">>, Answer)),
@@ -53,7 +61,16 @@ simple(_) ->
     true = inet:is_ip_address(IpAddress),
     ok.
 
-x_forwarded_for_empty(_) ->
+ip_long(_) ->
+    Answer = rinseweb_test:request_and_decode_answer("what is my ip"),
+    <<"text">> = maps:get(<<"type">>, Answer),
+    IpAddressBin = maps:get(<<"text">>, maps:get(<<"answer">>, Answer)),
+    {ok, IpAddress} = inet:parse_address(binary_to_list(IpAddressBin)),
+    % No X-Forwarded-For header should fall back on peer localhost IP
+    true = inet:is_ip_address(IpAddress),
+    ok.
+
+ip_x_forwarded_for_empty(_) ->
     Answer = rinseweb_test:request_and_decode_answer("wimip", [{"X-Forwarded-For", ""}]),
     <<"text">> = maps:get(<<"type">>, Answer),
     IpAddressBin = maps:get(<<"text">>, maps:get(<<"answer">>, Answer)),
@@ -62,7 +79,7 @@ x_forwarded_for_empty(_) ->
     true = inet:is_ip_address(IpAddress),
     ok.
 
-x_forwarded_for_ipv4(_) ->
+ip_x_forwarded_for_ipv4(_) ->
     IpAddressReqBin = <<"1.2.3.4">>,
     ExtraHeaders = [{"X-Forwarded-For", binary_to_list(IpAddressReqBin)}],
     Answer = rinseweb_test:request_and_decode_answer("wimip", ExtraHeaders),
@@ -73,7 +90,7 @@ x_forwarded_for_ipv4(_) ->
     true = inet:is_ip_address(IpAddress),
     ok.
 
-x_forwarded_for_ipv6(_) ->
+ip_x_forwarded_for_ipv6(_) ->
     IpAddressReqBin = <<"2001:db8::2:1">>,
     ExtraHeaders = [{"X-Forwarded-For", binary_to_list(IpAddressReqBin)}],
     Answer = rinseweb_test:request_and_decode_answer("wimip", ExtraHeaders),
@@ -82,4 +99,29 @@ x_forwarded_for_ipv6(_) ->
     IpAddressReqBin = IpAddressBin,
     {ok, IpAddress} = inet:parse_address(binary_to_list(IpAddressBin)),
     true = inet:is_ip_address(IpAddress),
+    ok.
+
+ua_none(_) ->
+    Answer = rinseweb_test:request_and_decode_answer("wimua"),
+    <<"text">> = maps:get(<<"type">>, Answer),
+    UserAgent = maps:get(<<"text">>, maps:get(<<"answer">>, Answer)),
+    UserAgent = <<>>,
+    ok.
+
+ua_short(_) ->
+    UserAgentHeaderValue = <<"Foo Bar">>,
+    ExtraHeaders = [{"User-Agent", binary_to_list(UserAgentHeaderValue)}],
+    Answer = rinseweb_test:request_and_decode_answer("wimua", ExtraHeaders),
+    <<"text">> = maps:get(<<"type">>, Answer),
+    UserAgent = maps:get(<<"text">>, maps:get(<<"answer">>, Answer)),
+    UserAgentHeaderValue = UserAgent,
+    ok.
+
+ua_long(_) ->
+    UserAgentHeaderValue = <<"Foo Bar">>,
+    ExtraHeaders = [{"User-Agent", binary_to_list(UserAgentHeaderValue)}],
+    Answer = rinseweb_test:request_and_decode_answer("what is my user agent", ExtraHeaders),
+    <<"text">> = maps:get(<<"type">>, Answer),
+    UserAgent = maps:get(<<"text">>, maps:get(<<"answer">>, Answer)),
+    UserAgentHeaderValue = UserAgent,
     ok.
