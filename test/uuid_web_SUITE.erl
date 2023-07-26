@@ -39,13 +39,7 @@ end_per_testcase(_, _Config) ->
 %% ============================================================================
 
 uuid_simple(_) ->
-    Question = "uuid",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ResponseMap = rinseweb_test:decode_response_body(ResponseBody),
-    ExpectedQuestion = list_to_binary(Question),
-    ExpectedQuestion = maps:get(<<"question">>, ResponseMap),
-    [Answer|_] = maps:get(<<"answers">>, ResponseMap),
+    Answer = rinseweb_test:request_and_decode_answer("uuid"),
     <<"text">> = maps:get(<<"type">>, Answer),
     true = uuid:is_v4(uuid:string_to_uuid(maps:get(<<"text">>, maps:get(<<"answer">>, Answer)))),
     ok.

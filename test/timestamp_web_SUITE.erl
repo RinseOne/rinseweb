@@ -42,18 +42,13 @@ end_per_testcase(_, _Config) ->
 %% Helpers
 %% ============================================================================
 
-result(Question, Text) ->
+expected_answer(Text) ->
     #{
-        <<"question">> => list_to_binary(Question),
-        <<"answers">> => [
-            #{
-                <<"source">> => <<"timestamp">>,
-                <<"type">> => <<"text">>,
-                <<"answer">> => #{
-                    <<"text">> => Text
-                }
-            }
-        ]
+        <<"source">> => <<"timestamp">>,
+        <<"type">> => <<"text">>,
+        <<"answer">> => #{
+            <<"text">> => Text
+        }
     }.
 
 %% ============================================================================
@@ -61,34 +56,22 @@ result(Question, Text) ->
 %% ============================================================================
 
 seconds(_) ->
-    Question = "1624433430",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    Response = rinseweb_test:decode_response_body(ResponseBody),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = result(Question, <<"2021-06-23 07:30:30 UTC">>),
-    ExpectedResponse = Response,
+    Answer = rinseweb_test:request_and_decode_answer("1624433430"),
+    ExpectedAnswer = expected_answer(<<"2021-06-23 07:30:30 UTC">>),
+    ExpectedAnswer = Answer,
     ok.
 
 milliseconds(_) ->
-    Question = "1624433430000",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    Response = rinseweb_test:decode_response_body(ResponseBody),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = result(Question, <<"2021-06-23 07:30:30 UTC">>),
-    ExpectedResponse = Response,
+    Answer = rinseweb_test:request_and_decode_answer("1624433430000"),
+    ExpectedAnswer = expected_answer(<<"2021-06-23 07:30:30 UTC">>),
+    ExpectedAnswer = Answer,
     ok.
 
 timestamp(_) ->
     TestStartTime = erlang:system_time(second),
     Questions = ["now", "timestamp", "unix timestamp"],
     F = fun(Question, Acc) ->
-            {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-            %[Answer|_] = rinseweb_test:decode_response_body(ResponseBody),
-            true = lists:member({"content-type","application/json"}, Headers),
-            ResponseMap = rinseweb_test:decode_response_body(ResponseBody),
-            ExpectedQuestion = list_to_binary(Question),
-            ExpectedQuestion = maps:get(<<"question">>, ResponseMap),
-            [Answer|_] = maps:get(<<"answers">>, ResponseMap),
+            Answer = rinseweb_test:request_and_decode_answer(Question),
             <<"text">> = maps:get(<<"type">>, Answer),
             <<"timestamp">> = maps:get(<<"source">>, Answer),
             AnswerTimeBin = maps:get(<<"text">>, maps:get(<<"answer">>, Answer)),

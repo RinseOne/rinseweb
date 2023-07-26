@@ -50,38 +50,26 @@ end_per_testcase(_, _Config) ->
 %% Helpers
 %% ============================================================================
 
-result_shrug(Question) when is_list(Question) ->
-    result_shrug(Question, <<"Unrecognized command">>, <<"default">>).
+expected_answer(UnitFromNum, UnitFrom, UnitToNum, UnitTo) ->
+    #{
+        <<"source">> => <<"convert">>,
+        <<"type">> => <<"conversion_result">>,
+        <<"answer">> => #{
+            <<"unit_from_name">> => UnitFrom,
+            <<"unit_from_number">> => UnitFromNum,
+            <<"unit_to_name">> => UnitTo,
+            <<"unit_to_number">> => UnitToNum
+        }
+    }.
 
-result_shrug(Question, Reason, Source) when is_list(Question) ->
-    Shrug = #{
+expected_answer_shrug_default() ->
+    expected_answer_shrug(<<"Unrecognized command">>, <<"default">>).
+
+expected_answer_shrug(Reason, Source) ->
+    #{
         <<"answer">> => Reason,
         <<"source">> => Source,
         <<"type">> => <<"shrug">>
-    },
-    result_custom_answers(Question, [Shrug]).
-
-result_custom_answers(Question, Answers) ->
-    #{
-        <<"question">> => list_to_binary(Question),
-        <<"answers">> => Answers
-    }.
-
-result(Question, UnitFromNum, UnitFrom, UnitToNum, UnitTo) ->
-    #{
-        <<"question">> => list_to_binary(Question),
-        <<"answers">> => [
-            #{
-                <<"source">> => <<"convert">>,
-                <<"type">> => <<"conversion_result">>,
-                <<"answer">> => #{
-                    <<"unit_from_name">> => UnitFrom,
-                    <<"unit_from_number">> => UnitFromNum,
-                    <<"unit_to_name">> => UnitTo,
-                    <<"unit_to_number">> => UnitToNum
-                }
-            }
-        ]
     }.
 
 %% ============================================================================
@@ -89,49 +77,33 @@ result(Question, UnitFromNum, UnitFrom, UnitToNum, UnitTo) ->
 %% ============================================================================
 
 convert_json(_) ->
-    Question = "convert 20 km to miles",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    Response = rinseweb_test:decode_response_body(ResponseBody),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = result(Question, 20, <<"km">>, 12.427424, <<"miles">>),
-    ExpectedResponse = Response,
+    Answer = rinseweb_test:request_and_decode_answer("convert 20 km to miles"),
+    ExpectedAnswer = expected_answer(20, <<"km">>, 12.427424, <<"miles">>),
+    ExpectedAnswer = Answer,
     ok.
 
 convert_json_extra_whitespace(_) ->
-    Question = "   convert 20 km to miles  ",
-    QuestionTrimmed = "convert 20 km to miles",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    Response = rinseweb_test:decode_response_body(ResponseBody),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = result(QuestionTrimmed, 20, <<"km">>, 12.427424, <<"miles">>),
-    ExpectedResponse = Response,
+    Answer = rinseweb_test:request_and_decode_answer("   convert 20 km to miles  "),
+    ExpectedAnswer = expected_answer(20, <<"km">>, 12.427424, <<"miles">>),
+    ExpectedAnswer = Answer,
     ok.
 
 convert_json_case_insensitive(_) ->
-    Question = "ConVerT 20 km to miles",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    Response = rinseweb_test:decode_response_body(ResponseBody),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = result(Question, 20, <<"km">>, 12.427424, <<"miles">>),
-    ExpectedResponse = Response,
+    Answer = rinseweb_test:request_and_decode_answer("ConVerT 20 km to miles"),
+    ExpectedAnswer = expected_answer(20, <<"km">>, 12.427424, <<"miles">>),
+    ExpectedAnswer = Answer,
     ok.
 
 convert_unrecognized_syntax(_) ->
-    Question = "convert foobar",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    Response = rinseweb_test:decode_response_body(ResponseBody),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = result_shrug(Question),
-    ExpectedResponse = Response,
+    Answer = rinseweb_test:request_and_decode_answer("convert foobar"),
+    ExpectedAnswer = expected_answer_shrug_default(),
+    ExpectedAnswer = Answer,
     ok.
 
 convert_unsupported_unit(_) ->
-    Question = "convert 5 jujumeters to meters",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    Response = rinseweb_test:decode_response_body(ResponseBody),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = result_shrug(Question, <<"Unknown unit 'jujumeters'">>, <<"convert">>),
-    ExpectedResponse = Response,
+    Answer = rinseweb_test:request_and_decode_answer("convert 5 jujumeters to meters"),
+    ExpectedAnswer = expected_answer_shrug(<<"Unknown unit 'jujumeters'">>, <<"convert">>),
+    ExpectedAnswer = Answer,
     ok.
 
 convert_invalid_number(_) ->
@@ -141,11 +113,9 @@ convert_invalid_number(_) ->
     ],
     F = fun(Num, Acc) ->
             Question = "convert " ++ Num ++ " kg to pounds",
-            {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-            Response = rinseweb_test:decode_response_body(ResponseBody),
-            true = lists:member({"content-type","application/json"}, Headers),
-            ExpectedResponse = result_shrug(Question),
-            ExpectedResponse = Response,
+            Answer = rinseweb_test:request_and_decode_answer(Question),
+            ExpectedAnswer = expected_answer_shrug_default(),
+            ExpectedAnswer = Answer,
             Acc
         end,
     ok = lists:foldr(F, ok, TestCases).
@@ -154,16 +124,12 @@ convert_use_cache(_) ->
     Question = "convert 20 km to m",
     QuestionBin = list_to_binary(Question),
     undefined = rinseweb_cache:get(rinseweb_wiz_convert, QuestionBin),
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers1, ResponseBody1}} = rinseweb_test:request_json(Question),
+    Answer1 = rinseweb_test:request_and_decode_answer(Question),
     % overwrite cache to make sure we are reading from it the 2nd time
-    ok = rinseweb_cache:put(rinseweb_wiz_convert, QuestionBin, #{foo => bar}),
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers2, ResponseBody2}} = rinseweb_test:request_json(Question),
-    Response1 = rinseweb_test:decode_response_body(ResponseBody1),
-    Response2 = rinseweb_test:decode_response_body(ResponseBody2),
-    true = lists:member({"content-type","application/json"}, Headers1),
-    true = lists:member({"content-type","application/json"}, Headers2),
-    ExpectedResponse1 = result(Question, 20, <<"km">>, 20000, <<"m">>),
-    ExpectedResponse2 = result_custom_answers(Question, [#{<<"foo">> => <<"bar">>}]),
-    ExpectedResponse1 = Response1,
-    ExpectedResponse2 = Response2,
+    ok = rinseweb_cache:put(rinseweb_wiz_convert, QuestionBin, #{foo => bar, type => baz}),
+    Answer2 = rinseweb_test:request_and_decode_answer(Question),
+    ExpectedAnswer1 = expected_answer(20, <<"km">>, 20000, <<"m">>),
+    ExpectedAnswer2 = #{<<"foo">> => <<"bar">>, <<"type">> => <<"baz">>},
+    ExpectedAnswer1 = Answer1,
+    ExpectedAnswer2 = Answer2,
     ok.
