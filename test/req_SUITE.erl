@@ -16,6 +16,7 @@
 -export([new_from_cowboy_req_multiple_ipv4_x_forwarded_for/1]).
 -export([new_from_cowboy_req_ipv6_x_forwarded_for/1]).
 -export([new_from_cowboy_req_multiple_ipv6_x_forwarded_for/1]).
+-export([new_from_cowboy_req_with_user_agent/1]).
 
 %% ============================================================================
 %% ct functions
@@ -28,7 +29,8 @@ all() ->
         new_from_cowboy_req_ipv4_x_forwarded_for,
         new_from_cowboy_req_multiple_ipv4_x_forwarded_for,
         new_from_cowboy_req_ipv6_x_forwarded_for,
-        new_from_cowboy_req_multiple_ipv6_x_forwarded_for
+        new_from_cowboy_req_multiple_ipv6_x_forwarded_for,
+        new_from_cowboy_req_with_user_agent
     ].
 
 init_per_suite(Config) ->
@@ -54,7 +56,10 @@ new_from_cowboy_req_no_x_forwarded_for(_) ->
         peer => {ClientIpTuple, 12345}
     },
     ActualReq = rinseweb_req:new_from_cowboy_req(Req),
-    ExpectedReq = #{client_ip => ClientIpTuple},
+    ExpectedReq = #{
+        client_ip => ClientIpTuple,
+        user_agent => <<>>
+    },
     ExpectedReq = ActualReq.
 
 new_from_cowboy_req_invalid_x_forwarded_for(_) ->
@@ -64,7 +69,10 @@ new_from_cowboy_req_invalid_x_forwarded_for(_) ->
         peer => {ClientIpTuple, 12345}
     },
     ActualReq = rinseweb_req:new_from_cowboy_req(Req),
-    ExpectedReq = #{client_ip => ClientIpTuple},
+    ExpectedReq = #{
+        client_ip => ClientIpTuple,
+        user_agent => <<>>
+    },
     ExpectedReq = ActualReq.
 
 new_from_cowboy_req_ipv4_x_forwarded_for(_) ->
@@ -74,7 +82,10 @@ new_from_cowboy_req_ipv4_x_forwarded_for(_) ->
         peer => {ClientIpTuple, 12345}
     },
     ActualReq = rinseweb_req:new_from_cowboy_req(Req),
-    ExpectedReq = #{client_ip => {1, 2, 3, 4}},
+    ExpectedReq = #{
+        client_ip => {1, 2, 3, 4},
+        user_agent => <<>>
+    },
     ExpectedReq = ActualReq.
 
 new_from_cowboy_req_multiple_ipv4_x_forwarded_for(_) ->
@@ -84,7 +95,10 @@ new_from_cowboy_req_multiple_ipv4_x_forwarded_for(_) ->
         peer => {ClientIpTuple, 12345}
     },
     ActualReq = rinseweb_req:new_from_cowboy_req(Req),
-    ExpectedReq = #{client_ip => {1, 1, 1, 1}},
+    ExpectedReq = #{
+        client_ip => {1, 1, 1, 1},
+        user_agent => <<>>
+    },
     ExpectedReq = ActualReq.
 
 new_from_cowboy_req_ipv6_x_forwarded_for(_) ->
@@ -94,7 +108,10 @@ new_from_cowboy_req_ipv6_x_forwarded_for(_) ->
         peer => {ClientIpTuple, 12345}
     },
     ActualReq = rinseweb_req:new_from_cowboy_req(Req),
-    ExpectedReq = #{client_ip => {8193, 3512, 0, 0, 0, 0, 2, 1}},
+    ExpectedReq = #{
+        client_ip => {8193, 3512, 0, 0, 0, 0, 2, 1},
+        user_agent => <<>>
+    },
     ExpectedReq = ActualReq.
 
 new_from_cowboy_req_multiple_ipv6_x_forwarded_for(_) ->
@@ -104,5 +121,22 @@ new_from_cowboy_req_multiple_ipv6_x_forwarded_for(_) ->
         peer => {ClientIpTuple, 12345}
     },
     ActualReq = rinseweb_req:new_from_cowboy_req(Req),
-    ExpectedReq = #{client_ip => {8193, 3512, 0, 0, 0, 0, 2, 1}},
+    ExpectedReq = #{
+        client_ip => {8193, 3512, 0, 0, 0, 0, 2, 1},
+        user_agent => <<>>
+    },
+    ExpectedReq = ActualReq.
+
+new_from_cowboy_req_with_user_agent(_) ->
+    UserAgent = <<"Foo Bar">>,
+    ClientIpTuple = {127, 0, 0, 1},
+    Req = #{
+        headers => #{<<"user-agent">> => UserAgent},
+        peer => {ClientIpTuple, 12345}
+    },
+    ActualReq = rinseweb_req:new_from_cowboy_req(Req),
+    ExpectedReq = #{
+        client_ip => ClientIpTuple,
+        user_agent => UserAgent
+    },
     ExpectedReq = ActualReq.
