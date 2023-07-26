@@ -39,13 +39,7 @@ end_per_testcase(_, _Config) ->
 %% ============================================================================
 
 search(_) ->
-    Question = "wiki hello",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ResponseMap = rinseweb_test:decode_response_body(ResponseBody),
-    ExpectedQuestion = list_to_binary(Question),
-    ExpectedQuestion = maps:get(<<"question">>, ResponseMap),
-    [Answer|_] = maps:get(<<"answers">>, ResponseMap),
+    Answer = rinseweb_test:request_and_decode_answer("wiki hello"),
     <<"wiki">> = maps:get(<<"type">>, Answer),
     AnswerCustom = maps:get(<<"answer">>, Answer),
     true = is_list(AnswerCustom),

@@ -45,13 +45,7 @@ end_per_testcase(_, _Config) ->
 %% ============================================================================
 
 simple(_) ->
-    Question = "wimip",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ResponseMap = rinseweb_test:decode_response_body(ResponseBody),
-    ExpectedQuestion = list_to_binary(Question),
-    ExpectedQuestion = maps:get(<<"question">>, ResponseMap),
-    [Answer|_] = maps:get(<<"answers">>, ResponseMap),
+    Answer = rinseweb_test:request_and_decode_answer("wimip"),
     <<"text">> = maps:get(<<"type">>, Answer),
     IpAddressBin = maps:get(<<"text">>, maps:get(<<"answer">>, Answer)),
     {ok, IpAddress} = inet:parse_address(binary_to_list(IpAddressBin)),
@@ -60,14 +54,7 @@ simple(_) ->
     ok.
 
 x_forwarded_for_empty(_) ->
-    Question = "wimip",
-    ExtraHeaders = [{"X-Forwarded-For", ""}],
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question, ExtraHeaders),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ResponseMap = rinseweb_test:decode_response_body(ResponseBody),
-    ExpectedQuestion = list_to_binary(Question),
-    ExpectedQuestion = maps:get(<<"question">>, ResponseMap),
-    [Answer|_] = maps:get(<<"answers">>, ResponseMap),
+    Answer = rinseweb_test:request_and_decode_answer("wimip", [{"X-Forwarded-For", ""}]),
     <<"text">> = maps:get(<<"type">>, Answer),
     IpAddressBin = maps:get(<<"text">>, maps:get(<<"answer">>, Answer)),
     {ok, IpAddress} = inet:parse_address(binary_to_list(IpAddressBin)),
@@ -76,15 +63,9 @@ x_forwarded_for_empty(_) ->
     ok.
 
 x_forwarded_for_ipv4(_) ->
-    Question = "wimip",
     IpAddressReqBin = <<"1.2.3.4">>,
     ExtraHeaders = [{"X-Forwarded-For", binary_to_list(IpAddressReqBin)}],
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question, ExtraHeaders),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ResponseMap = rinseweb_test:decode_response_body(ResponseBody),
-    ExpectedQuestion = list_to_binary(Question),
-    ExpectedQuestion = maps:get(<<"question">>, ResponseMap),
-    [Answer|_] = maps:get(<<"answers">>, ResponseMap),
+    Answer = rinseweb_test:request_and_decode_answer("wimip", ExtraHeaders),
     <<"text">> = maps:get(<<"type">>, Answer),
     IpAddressBin = maps:get(<<"text">>, maps:get(<<"answer">>, Answer)),
     IpAddressReqBin = IpAddressBin,
@@ -93,15 +74,9 @@ x_forwarded_for_ipv4(_) ->
     ok.
 
 x_forwarded_for_ipv6(_) ->
-    Question = "wimip",
     IpAddressReqBin = <<"2001:db8::2:1">>,
     ExtraHeaders = [{"X-Forwarded-For", binary_to_list(IpAddressReqBin)}],
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question, ExtraHeaders),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ResponseMap = rinseweb_test:decode_response_body(ResponseBody),
-    ExpectedQuestion = list_to_binary(Question),
-    ExpectedQuestion = maps:get(<<"question">>, ResponseMap),
-    [Answer|_] = maps:get(<<"answers">>, ResponseMap),
+    Answer = rinseweb_test:request_and_decode_answer("wimip", ExtraHeaders),
     <<"text">> = maps:get(<<"type">>, Answer),
     IpAddressBin = maps:get(<<"text">>, maps:get(<<"answer">>, Answer)),
     IpAddressReqBin = IpAddressBin,

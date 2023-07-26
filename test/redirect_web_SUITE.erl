@@ -11,6 +11,7 @@
 
 %% Tests
 -export([ddg/1]).
+-export([ddg_encode_query/1]).
 
 %% ============================================================================
 %% ct functions
@@ -18,7 +19,8 @@
 
 all() ->
     [
-        ddg
+        ddg,
+        ddg_encode_query
     ].
 
 init_per_suite(Config) ->
@@ -38,20 +40,15 @@ end_per_testcase(_, _Config) ->
 %% Helpers
 %% ============================================================================
 
-result(Question, Query, Source, Url) ->
+expected_answer(Query, Source, Url) ->
     #{
-        <<"question">> => list_to_binary(Question),
-        <<"answers">> => [
-            #{
-                <<"source">> => <<"redirect">>,
-                <<"type">> => <<"redirect">>,
-                <<"answer">> => #{
-                    <<"url">> => Url,
-                    <<"source">> => Source,
-                    <<"query">> => Query
-                }
-            }
-        ]
+        <<"source">> => <<"redirect">>,
+        <<"type">> => <<"redirect">>,
+        <<"answer">> => #{
+            <<"url">> => Url,
+            <<"source">> => Source,
+            <<"query">> => Query
+        }
     }.
 
 %% ============================================================================
@@ -59,19 +56,13 @@ result(Question, Query, Source, Url) ->
 %% ============================================================================
 
 ddg(_) ->
-    Question = "ddg hello",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    Response = rinseweb_test:decode_response_body(ResponseBody),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = result(Question, <<"hello">>, <<"DuckDuckGo">>, <<"https://duckduckgo.com/?t=rinseone&q=hello">>),
-    ExpectedResponse = Response,
+    Answer = rinseweb_test:request_and_decode_answer("ddg hello"),
+    ExpectedAnswer = expected_answer(<<"hello">>, <<"DuckDuckGo">>, <<"https://duckduckgo.com/?t=rinseone&q=hello">>),
+    ExpectedAnswer = Answer,
     ok.
 
 ddg_encode_query(_) ->
-    Question = "ddg hello & goodbye",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    Response = rinseweb_test:decode_response_body(ResponseBody),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ExpectedResponse = result(Question, <<"hello & goodbye">>, <<"DuckDuckGo">>, <<"https://duckduckgo.com/?t=rinseone&q=hello%20%26%20goodbye">>),
-    ExpectedResponse = Response,
+    Answer = rinseweb_test:request_and_decode_answer("ddg hello & goodbye"),
+    ExpectedAnswer = expected_answer(<<"hello & goodbye">>, <<"DuckDuckGo">>, <<"https://duckduckgo.com/?t=rinseone&q=hello%20%26%20goodbye">>),
+    ExpectedAnswer = Answer,
     ok.
