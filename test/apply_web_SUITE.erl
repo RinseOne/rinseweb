@@ -41,53 +41,42 @@ end_per_testcase(_, _Config) ->
     ok.
 
 %% ============================================================================
+%% Helpers
+%% ============================================================================
+
+expected_answer(Number) ->
+    #{
+        <<"source">> => <<"apply">>,
+        <<"type">> => <<"number">>,
+        <<"answer">> => #{
+            <<"number">> => Number
+        }
+    }.
+
+%% ============================================================================
 %% Tests
 %% ============================================================================
 
 add(_) ->
-    Question = "+ 1 2 3",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ResponseMap = rinseweb_test:decode_response_body(ResponseBody),
-    ExpectedQuestion = list_to_binary(Question),
-    ExpectedQuestion = maps:get(<<"question">>, ResponseMap),
-    [Answer|_] = maps:get(<<"answers">>, ResponseMap),
-    <<"number">> = maps:get(<<"type">>, Answer),
-    6 = maps:get(<<"number">>, maps:get(<<"answer">>, Answer)),
+    Answer = rinseweb_test:request_and_decode_answer("+ 1 2 3"),
+    ExpectedAnswer = expected_answer(6),
+    ExpectedAnswer = Answer,
     ok.
 
 subtract(_) ->
-    Question = "- 1 2 3",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ResponseMap = rinseweb_test:decode_response_body(ResponseBody),
-    ExpectedQuestion = list_to_binary(Question),
-    ExpectedQuestion = maps:get(<<"question">>, ResponseMap),
-    [Answer|_] = maps:get(<<"answers">>, ResponseMap),
-    <<"number">> = maps:get(<<"type">>, Answer),
-    -4 = maps:get(<<"number">>, maps:get(<<"answer">>, Answer)),
+    Answer = rinseweb_test:request_and_decode_answer("- 1 2 3"),
+    ExpectedAnswer = expected_answer(-4),
+    ExpectedAnswer = Answer,
     ok.
 
 multiply(_) ->
-    Question = "* 1 2 3",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ResponseMap = rinseweb_test:decode_response_body(ResponseBody),
-    ExpectedQuestion = list_to_binary(Question),
-    ExpectedQuestion = maps:get(<<"question">>, ResponseMap),
-    [Answer|_] = maps:get(<<"answers">>, ResponseMap),
-    <<"number">> = maps:get(<<"type">>, Answer),
-    6 = maps:get(<<"number">>, maps:get(<<"answer">>, Answer)),
+    Answer = rinseweb_test:request_and_decode_answer("* 1 2 3"),
+    ExpectedAnswer = expected_answer(6),
+    ExpectedAnswer = Answer,
     ok.
 
 divide(_) ->
-    Question = "/ 4 2 2 2",
-    {ok, {{"HTTP/1.1", 200, "OK"}, Headers, ResponseBody}} = rinseweb_test:request_json(Question),
-    true = lists:member({"content-type","application/json"}, Headers),
-    ResponseMap = rinseweb_test:decode_response_body(ResponseBody),
-    ExpectedQuestion = list_to_binary(Question),
-    ExpectedQuestion = maps:get(<<"question">>, ResponseMap),
-    [Answer|_] = maps:get(<<"answers">>, ResponseMap),
-    <<"number">> = maps:get(<<"type">>, Answer),
-    0.5 = maps:get(<<"number">>, maps:get(<<"answer">>, Answer)),
+    Answer = rinseweb_test:request_and_decode_answer("/ 4 2 2 2"),
+    ExpectedAnswer = expected_answer(0.5),
+    ExpectedAnswer = Answer,
     ok.
