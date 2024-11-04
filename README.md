@@ -1,5 +1,8 @@
 # rinseweb
 
+> **_NOTE:_** rinse.one no longer runs on AWS and no longer uses this repository for its code.
+> However, this repository is still available as an archive as a reference for anyone.
+
 ![Test](https://img.shields.io/github/actions/workflow/status/RinseOne/rinseweb/test.yml?label=Test&style=for-the-badge)
 ![Release](https://img.shields.io/github/actions/workflow/status/RinseOne/rinseweb/release.yml?label=Release&style=for-the-badge)
 ![GitHub](https://img.shields.io/github/license/RinseOne/rinseweb?style=for-the-badge)
